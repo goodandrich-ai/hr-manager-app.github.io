@@ -24,15 +24,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
 .screen{display:none}.screen.active{display:block}
 .container{max-width:960px;margin:0 auto;padding:12px 16px 80px}
 
-/* Login */
-#loginScreen{background:linear-gradient(135deg,var(--navy),#0d2137);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-card{background:#fff;border-radius:16px;padding:40px 32px;width:100%;max-width:380px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3)}
-.login-logo{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:2px}
-.login-sub{font-size:13px;color:var(--gray3);margin-bottom:4px}
-.login-badge{display:inline-block;background:var(--navy);color:#fff;font-size:11px;padding:2px 10px;border-radius:10px;margin-bottom:24px}
-.login-error{color:var(--red);font-size:13px;margin-top:8px;min-height:20px}
-.login-loading{color:var(--blue);font-size:13px;margin-top:8px;display:none}
-
 /* Topbar */
 .topbar{background:linear-gradient(135deg,var(--navy),#0d2137);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
 .topbar-name{font-size:15px;font-weight:700}
@@ -153,27 +144,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
 </head>
 <body>
 
-<!-- ═══ LOGIN ═══ -->
-<div id="loginScreen" class="screen active">
-  <div class="login-card">
-    <div class="login-logo">Good Rich Power Plus</div>
-    <div class="login-sub">ระบบจัดการ HR</div>
-    <div class="login-badge">👑 HR / Manager Only</div>
-    <input type="tel" id="loginInput" maxlength="13" placeholder="เลขบัตรประชาชน 13 หลัก" inputmode="numeric" autocomplete="off" style="margin-bottom:14px;letter-spacing:2px;text-align:center;font-size:16px">
-    <button class="btn btn-primary btn-block" id="loginBtn">เข้าสู่ระบบ</button>
-    <div class="login-error" id="loginError"></div>
-    <div class="login-loading" id="loginLoading">กำลังตรวจสอบสิทธิ์...</div>
-  </div>
-</div>
-
 <!-- ═══ APP ═══ -->
-<div id="appScreen" class="screen">
+<div id="appScreen" class="screen active">
   <div class="topbar">
     <div>
-      <div class="topbar-name" id="topName"></div>
-      <div class="topbar-role" id="topRole"></div>
+      <div class="topbar-name">Good Rich Power Plus</div>
+      <div class="topbar-role">👑 ระบบ HR Manager</div>
     </div>
-    <button class="btn-logout" id="logoutBtn">ออก</button>
+    <div style="font-size:11px;opacity:.7">คุณปอ (Admin)</div>
   </div>
 
   <div class="container">
@@ -191,7 +169,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
     <button data-tab="tabAttendance"><span class="nav-icon">📅</span>เข้างาน</button>
     <button data-tab="tabLeave"><span class="nav-icon">✅</span>อนุมัติลา</button>
     <button data-tab="tabPayroll"><span class="nav-icon">💰</span>เงินเดือน</button>
-    <button data-tab="tabRoles" id="navRoles" style="display:none"><span class="nav-icon">🔑</span>สิทธิ์</button>
+    <button data-tab="tabRoles" id="navRoles"><span class="nav-icon">🔑</span>สิทธิ์</button>
   </div>
 </div>
 
@@ -211,15 +189,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
 
 <script>
 // ============================================================
-// CONFIG
+// CONFIG — แก้ทั้ง 2 ค่านี้หลัง deploy Apps Script
 // ============================================================
-var API_URL = 'https://script.google.com/macros/s/AKfycbwAXmDQUtoEgBueR7hnEdVm3aIQYrHF98TOWid-vtEcA5nTFihebUEDdDV34tjO2QH_Og/exec';
+var API_URL = 'https://script.google.com/macros/s/AKfycbzB4-h_Av45KztpBp43wmPYd0XM-o_ltBVmgPedIT21BkFfrBDrnFtfTsS3EGN4k1fjpg/exec';
+var MANAGER_KEY = 'grp-hrm-2026'; // ต้องตรงกับใน Code.gs
 
 // ============================================================
 // STATE
 // ============================================================
-var _session = null;
-var _credential = '';
 var _months = [];
 var _nowMonth = '';
 var _employees = [];
@@ -282,10 +259,9 @@ function _buildDeptSelect(id, value) {
 }
 
 async function apiGet(action, params) {
-  var url = API_URL + '?action=' + encodeURIComponent(action);
+  var url = API_URL + '?action=' + encodeURIComponent(action)
+    + '&empId=MANAGER&credential=' + encodeURIComponent(MANAGER_KEY);
   params = params || {};
-  params.empId = _session ? _session.empId : '';
-  params.credential = _credential;
   Object.keys(params).forEach(function(k) {
     url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(params[k] || '');
   });
@@ -296,8 +272,8 @@ async function apiGet(action, params) {
 }
 
 async function apiPost(payload) {
-  payload.empId = _session.empId;
-  payload.credential = _credential;
+  payload.empId = 'MANAGER';
+  payload.credential = MANAGER_KEY;
   var res = await fetch(API_URL, {
     method:'POST',
     headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -309,51 +285,13 @@ async function apiPost(payload) {
 }
 
 // ============================================================
-// LOGIN
+// AUTO INIT — ไม่มี login, โหลดหน้าเลย
 // ============================================================
-$('loginBtn').addEventListener('click', doLogin);
-$('loginInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
-
-async function doLogin() {
-  var cred = $('loginInput').value.replace(/\D/g, '');
-  $('loginError').textContent = '';
-  if (cred.length !== 13) { $('loginError').textContent = 'กรุณากรอกเลขบัตรประชาชน 13 หลัก'; return; }
-  $('loginLoading').style.display = 'block';
-  $('loginBtn').disabled = true;
-  try {
-    var result = await apiGet('login', {credential: cred});
-    if (!result.success) { $('loginError').textContent = result.error; return; }
-    if (!['hr','manager','admin'].includes(result.data.role)) {
-      $('loginError').textContent = '⛔ ไม่มีสิทธิ์ใช้งานระบบ HR Manager';
-      return;
-    }
-    _session = result.data;
-    _credential = cred;
-    $('loginScreen').classList.remove('active');
-    $('appScreen').classList.add('active');
-    $('topName').textContent = _session.name;
-    var roleLabel = {admin:'👑 Admin', manager:'🔷 Manager', hr:'🏢 HR'}[_session.role] || _session.role;
-    $('topRole').textContent = roleLabel + ' — ' + _session.dept;
-    // Show role management tab for admin only
-    if (_session.role === 'admin') {
-      $('navRoles').style.display = '';
-    }
-    await _loadMonths();
-    await _loadEmployees();
-    loadDashboard();
-  } catch(err) {
-    $('loginError').textContent = 'เกิดข้อผิดพลาด: ' + err.message;
-  } finally {
-    $('loginLoading').style.display = 'none';
-    $('loginBtn').disabled = false;
-  }
-}
-
-$('logoutBtn').addEventListener('click', function() {
-  _session = null; _credential = ''; _employees = []; _leaveLoaded = false; _empLoaded = false;
-  $('appScreen').classList.remove('active');
-  $('loginScreen').classList.add('active');
-  $('loginInput').value = ''; $('loginError').textContent = '';
+window.addEventListener('DOMContentLoaded', async function() {
+  $('tabDashboard').innerHTML = '<div class="loading">⏳ กำลังโหลด...</div>';
+  await _loadMonths();
+  await _loadEmployees();
+  loadDashboard();
 });
 
 // ============================================================
@@ -771,10 +709,6 @@ function updatePayRow(input) {
 // TAB: ROLE MANAGER (Admin only)
 // ============================================================
 async function loadRoleManager() {
-  if (_session.role !== 'admin') {
-    $('tabRoles').innerHTML = '<div class="empty"><div class="empty-icon">⛔</div>เฉพาะ Admin เท่านั้น</div>';
-    return;
-  }
   $('tabRoles').innerHTML = '<div class="loading">⏳ กำลังโหลด...</div>';
   var r = await apiGet('getEmployeeRoles', {});
   if (!r.success) { $('tabRoles').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>' + r.error + '</div>'; return; }
@@ -792,7 +726,7 @@ function _renderRoleManager(list) {
 
   // Admin info box
   html += '<div style="background:var(--purple-light);border-left:4px solid var(--purple);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px">';
-  html += '<strong style="color:var(--purple)">👑 System Admin:</strong> ' + _session.name;
+  html += '<strong style="color:var(--purple)">👑 System Admin:</strong> นางสาววรลักษณ์ แสงสุวรรณ (คุณปอ)';
   html += '<br><span style="color:#666;font-size:12px">woralakpor789@gmail.com — ผู้ดูแลระบบหลัก</span>';
   html += '</div>';
 
