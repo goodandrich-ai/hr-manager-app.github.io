@@ -108,6 +108,38 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
 .pill-tabs{display:flex;gap:6px;margin-bottom:14px}
 .pill-tab{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;background:var(--gray1);color:var(--gray3);border:1px solid var(--gray2)}
 .pill-tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+/* Slip modal */
+.slip-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;display:none;align-items:center;justify-content:center;padding:12px}
+.slip-modal-overlay.open{display:flex}
+.slip-modal-box{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.25)}
+.slip-modal-actions{display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--gray2);justify-content:flex-end;flex-wrap:wrap;background:#fff;border-radius:0 0 16px 16px;position:sticky;bottom:0}
+.btn-slip{background:#dd4155;color:#fff}
+/* Professional payslip */
+.payslip{font-family:'Sarabun',Tahoma,sans-serif;color:#333}
+.ps-header{background:#072b4e;color:#fff;padding:20px 24px}
+.ps-header h1{margin:0;font-size:17px;font-weight:700;letter-spacing:.3px}
+.ps-header p{margin:4px 0 0;font-size:11px;opacity:.7}
+.ps-month{background:#1a3a6c;color:#fff;padding:10px 24px;font-size:13px;font-weight:600;letter-spacing:.5px}
+.ps-emp{padding:14px 24px;border-bottom:1px solid #e8edf5;background:#f8fafd}
+.ps-emp-name{font-size:15px;font-weight:700;color:#072b4e;margin-bottom:2px}
+.ps-emp-meta{font-size:11px;color:#888}
+.ps-sec{padding:5px 24px;font-size:10px;font-weight:700;color:#072b4e;background:#e8edf5;letter-spacing:1px;text-transform:uppercase;border-top:2px solid #ccd8ea}
+.ps-table{width:100%;border-collapse:collapse}
+.ps-table td{padding:7px 24px;font-size:13px;border-bottom:1px solid #f0f0f0}
+.ps-table td:last-child{text-align:right;font-weight:600}
+.ps-table tr:nth-child(even) td{background:#fafbfd}
+.ps-total td{background:#072b4e!important;color:#fff;font-weight:700;font-size:13px}
+.ps-net{background:linear-gradient(135deg,#072b4e,#1a3a6c);color:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center}
+.ps-net-label{font-size:13px;opacity:.85}
+.ps-net-amount{font-size:22px;font-weight:700}
+.ps-bank{padding:12px 24px;background:#f8fafd;border-top:1px solid #e8edf5;font-size:11px;color:#888}
+/* Print isolation */
+@media print{
+  body>*{visibility:hidden!important}
+  #printSlipArea,#printSlipArea *{visibility:visible!important}
+  #printSlipArea{position:fixed;left:0;top:0;width:100%;z-index:9999;background:#fff}
+  .slip-modal-overlay{display:none!important}
+}
 </style>
 </head>
 <body>
@@ -132,6 +164,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
   </div>
 </div>
 
+<!-- Slip Modal -->
+<div class="slip-modal-overlay" id="slipModal" onclick="if(event.target===this)closeSlipModal()">
+  <div class="slip-modal-box">
+    <div id="slipContent"></div>
+    <div class="slip-modal-actions">
+      <button class="btn btn-secondary btn-sm" onclick="closeSlipModal()">✕ ปิด</button>
+      <button class="btn btn-slip btn-sm" id="slipEmailBtn" onclick="emailSlipFromModal()">📧 ส่งอีเมล</button>
+      <button class="btn btn-primary btn-sm" onclick="printSlip()">🖨️ พิมพ์ / บันทึก PDF</button>
+    </div>
+  </div>
+</div>
+<div id="printSlipArea" style="display:none"></div>
+
 <!-- Edit Employee Modal -->
 <div class="modal-overlay" id="editEmpModal">
   <div class="modal-sheet">
@@ -152,7 +197,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
 // ─────────────────────────────────────────────────────────────
 // CONFIG
 // ─────────────────────────────────────────────────────────────
-var API_URL     = 'https://script.google.com/macros/s/AKfycbxkCL2iUmHTUhmyvr-YSq8YN__EinTnnv_2hSnrAhXRsqKEQhRTA-arDgO4zrBZo27s0w/exec';
+var API_URL     = 'https://script.google.com/macros/s/AKfycbzSqWzDIHI9NBT2uqjfnQY2dVcadmIIXns4ztfpDSSRRF3Yk1-kpxVOf9nlpruWPJoyQw/exec';
 var MANAGER_KEY = 'grp-hrm-2026';
 
 // ─────────────────────────────────────────────────────────────
@@ -165,6 +210,7 @@ var _deptFilter = 'all';
 var _payMonth  = '';
 var _payData   = [];
 var _paySubTab = 'payroll'; // 'payroll' | 'ytd'
+var _currentSlipIdx = null;
 
 // ─────────────────────────────────────────────────────────────
 // UTILS
@@ -494,7 +540,7 @@ function _renderPayrollMgr() {
     html+='<td><input type="number" data-idx="'+i+'" data-field="otherDeduct"        value="'+(row.otherDeduct||0)+'" oninput="updatePayRow(this)"></td>';
     html+='<td id="net_'+i+'" style="font-weight:700;color:var(--navy);white-space:nowrap">&#3647;'+fmt(net)+'</td>';
     html+='<td style="text-align:center">'+badge+'</td>';
-    html+='<td style="text-align:center"><button class="btn btn-secondary btn-sm" onclick="downloadSlip('+i+')" title="ดาวน์โหลดสลิป">&#128229;</button></td>';
+    html+='<td style="text-align:center"><button class="btn btn-slip btn-sm" onclick="openSlipModal('+i+')" title="ดูสลิป">&#128203;</button></td>';
     html+='</tr>';
   });
   html+='</table></div>';
@@ -547,9 +593,16 @@ async function savePayroll(status){
   var rows=_payData.map(function(r){return Object.assign({},r,{month:_payMonth});});
   var res=await apiPost({action:'savePayroll',rows:rows,status:status});
   if(res.success){
-    msg.className='msg-box msg-success';
-    msg.textContent=(status==='confirmed'?'&#10003; Confirm':'&#128190; Save')+' เงินเดือน '+_monthLabel(_payMonth)+' เรียบร้อย ('+res.saved+' คน)';
-    await loadPayrollMgr();
+    _payData.forEach(function(r){r.status=status;}); // ★ update locally — no API re-fetch
+    _renderPayrollMgr();
+    var msg2=$('payMgrMsg');
+    if(msg2){
+      msg2.className='msg-box msg-success';
+      msg2.textContent=(status==='confirmed'?'✓ Confirm':'💾 Save')+' เงินเดือน '+_monthLabel(_payMonth)+' เรียบร้อย ('+res.saved+' คน)';
+      msg2.style.display='block';
+      setTimeout(function(){if($('payMgrMsg'))$('payMgrMsg').style.display='none';},4000);
+    }
+    return;
   } else {
     msg.className='msg-box msg-error'; msg.textContent='&#10060; '+esc(res.error);
   }
@@ -660,7 +713,92 @@ function exportYTDCSV(data,year){
 }
 
 // ─────────────────────────────────────────────────────────────
-// SLIP DOWNLOAD (Blob URL)
+// SLIP MODAL
+// ─────────────────────────────────────────────────────────────
+function openSlipModal(idx){
+  _currentSlipIdx=idx;
+  var row=_payData[idx]; if(!row) return;
+  var emp=_employees.find(function(e){return e.empId===row.empId;});
+  $('slipContent').innerHTML=_renderPayslip(row,emp);
+  var emailBtn=$('slipEmailBtn');
+  if(emailBtn) emailBtn.style.display=(emp&&emp.email)?'':'none';
+  $('slipModal').classList.add('open');
+}
+function closeSlipModal(){
+  $('slipModal').classList.remove('open');
+  _currentSlipIdx=null;
+}
+function printSlip(){
+  if(_currentSlipIdx===null) return;
+  var row=_payData[_currentSlipIdx];
+  var emp=_employees.find(function(e){return e.empId===row.empId;});
+  var pa=$('printSlipArea');
+  pa.innerHTML=_renderPayslip(row,emp);
+  pa.style.display='block';
+  window.print();
+  setTimeout(function(){pa.style.display='none';pa.innerHTML='';},800);
+}
+async function emailSlipFromModal(){
+  if(_currentSlipIdx===null) return;
+  var row=_payData[_currentSlipIdx];
+  var btn=$('slipEmailBtn');
+  if(btn){btn.disabled=true;btn.textContent='📤 กำลังส่ง...';}
+  var res=await apiPost({action:'sendPayrollEmail',targetEmpId:row.empId,month:_payMonth});
+  if(btn){btn.disabled=false;btn.textContent='📧 ส่งอีเมล';}
+  if(res.success) alert('✓ ส่งสลิปไปยัง '+res.sentTo+' เรียบร้อยแล้ว');
+  else alert('✗ '+(res.reason||res.error||'ส่งไม่สำเร็จ'));
+}
+function _renderPayslip(row,emp){
+  var ti=(Number(row.salary)||0)+(Number(row.allowances)||0)+(Number(row.otPay)||0)+(Number(row.otherIncome)||0)
+       +(Number(row.birthdayAllow)||0)+(Number(row.weddingAllow)||0)+(Number(row.specialAcctAllow)||0);
+  var sso=Math.min(Math.round(ti*0.05),750);
+  var tax=Number(row.withholdingTax)||0;
+  var od=Number(row.otherDeduct)||0;
+  var totalDeduct=sso+tax+od;
+  var net=ti-totalDeduct;
+  var ml=_monthLabel(row.month||_payMonth);
+  function R(label,val,cls){
+    return '<tr'+(cls?' class="'+cls+'"':'')+'>'+
+      '<td>'+label+'</td>'+
+      '<td>&#3647;'+fmt(val)+'</td></tr>';
+  }
+  var bankLine='';
+  if(emp&&emp.bank) bankLine='&#127974; '+esc(emp.bank)+' '+esc(emp.bankAcct||'')+(emp.bankName?' · '+esc(emp.bankName):'');
+  return '<div class="payslip">'+
+    '<div class="ps-header"><h1>&#128176; สลิปเงินเดือน</h1><p>Good Rich Power Plus</p></div>'+
+    '<div class="ps-month">'+esc(ml)+'&nbsp;&nbsp;|&nbsp;&nbsp;'+esc(row.empId)+'</div>'+
+    '<div class="ps-emp">'+
+      '<div class="ps-emp-name">'+esc(row.name)+'</div>'+
+      '<div class="ps-emp-meta">'+esc(row.dept||'')+(row.dept&&row.position?' &mdash; ':'')+esc(row.position||'')+'</div>'+
+    '</div>'+
+    '<div class="ps-sec">รายรับ</div>'+
+    '<table class="ps-table">'+
+    R('เงินเดือนฐาน',row.salary)+
+    ((row.allowances>0)?R('เบี้ยเลี้ยงรวม',row.allowances):'')+
+    ((row.otPay>0)?R('ค่า OT',row.otPay):'')+
+    ((row.otherIncome>0)?R('รายรับอื่นๆ',row.otherIncome):'')+
+    ((row.birthdayAllow>0)?R('&#127874; สวัสดิการวันเกิด',row.birthdayAllow):'')+
+    ((row.weddingAllow>0)?R('&#128141; สวัสดิการมงคลสมรส',row.weddingAllow):'')+
+    ((row.specialAcctAllow>0)?R('&#127991; เงินพิเศษบัญชี',row.specialAcctAllow):'')+
+    R('รวมรายรับ',ti,'ps-total')+
+    '</table>'+
+    '<div class="ps-sec">รายหัก</div>'+
+    '<table class="ps-table">'+
+    R('ประกันสังคม (SSO 5%, สูงสุด &#3647;750)',sso)+
+    ((tax>0)?R('ภาษีหัก ณ ที่จ่าย',tax):'')+
+    ((od>0)?R('หักอื่นๆ',od):'')+
+    R('รวมรายหัก',totalDeduct,'ps-total')+
+    '</table>'+
+    '<div class="ps-net">'+
+      '<span class="ps-net-label">&#128184; เงินสุทธิที่ได้รับ</span>'+
+      '<span class="ps-net-amount">&#3647;'+fmt(net)+'</span>'+
+    '</div>'+
+    (bankLine?'<div class="ps-bank">'+bankLine+'</div>':'')+
+  '</div>';
+}
+
+// ─────────────────────────────────────────────────────────────
+// SLIP DOWNLOAD (legacy — kept for reference, replaced by modal)
 // ─────────────────────────────────────────────────────────────
 function downloadSlip(idx){
   var row=_payData[idx]; if(!row) return;
