@@ -11,7 +11,6 @@ body{font-family:'Sarabun',Tahoma,sans-serif;background:#f0f2f5;color:#333;min-h
 button{cursor:pointer;border:none;font-family:inherit;font-size:14px}
 input,select,textarea{font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid #d0d0d0;border-radius:8px;width:100%}
 input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-shadow:0 0 0 3px rgba(26,58,108,.15)}
-
 :root{
   --navy:#1a3a6c;--blue:#2a5298;--blue-light:#e8f4fd;
   --red:#c62828;--red-light:#fde8e8;
@@ -20,49 +19,32 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
   --orange:#e65100;--purple:#6a1b9a;--purple-light:#f3e5f5;
   --gray1:#f8f9fa;--gray2:#e0e0e0;--gray3:#999
 }
-
 .screen{display:none}.screen.active{display:block}
 .container{max-width:960px;margin:0 auto;padding:12px 16px 80px}
-
-/* Topbar */
 .topbar{background:linear-gradient(135deg,var(--navy),#0d2137);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
 .topbar-name{font-size:15px;font-weight:700}
-.topbar-role{font-size:11px;opacity:.8}
-.btn-logout{background:rgba(255,255,255,.2);color:#fff;padding:6px 14px;border-radius:6px;font-size:12px}
-
-/* Bottom Nav */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--gray2);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
 .bottom-nav button{flex:1;padding:8px 0 6px;background:none;display:flex;flex-direction:column;align-items:center;font-size:9px;color:var(--gray3);gap:1px}
 .bottom-nav button.active{color:var(--blue)}
 .nav-icon{font-size:18px}
-
-/* Cards */
 .card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;margin-bottom:12px}
 .card-header{background:linear-gradient(135deg,var(--navy),var(--blue));padding:14px 18px;color:#fff}
 .card-header h2{font-size:15px;font-weight:700}
 .card-header p{font-size:11px;opacity:.8;margin-top:2px}
 .card-body{padding:14px 18px}
-
-/* Buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:8px;font-weight:600;font-size:13px;transition:all .15s;gap:5px}
 .btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--navy)}
 .btn-success{background:var(--green);color:#fff}
 .btn-danger{background:var(--red);color:#fff}
 .btn-secondary{background:var(--gray1);color:#333;border:1px solid var(--gray2)}
-.btn-warning{background:var(--yellow);color:#333}
-.btn-block{width:100%;padding:13px}
+.btn-email{background:#dd4155;color:#fff}
+.btn-csv{background:var(--green);color:#fff}
 .btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
-
-/* Badges */
 .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
-.badge-pending{background:var(--yellow-light);color:var(--orange);border:1px solid var(--yellow)}
-.badge-approved{background:var(--green-light);color:var(--green);border:1px solid var(--green)}
-.badge-rejected{background:var(--red-light);color:var(--red);border:1px solid var(--red)}
-.badge-cancelled{background:var(--gray1);color:var(--gray3);border:1px solid var(--gray2)}
 .badge-draft{background:var(--yellow-light);color:var(--orange)}
-.badge-confirmed{background:var(--green-light);color:var(--green)}
-
-/* Stat cards */
+.badge-confirmed{background:var(--green-light);color:var(--green);border:1px solid var(--green)}
+.badge-probation{background:var(--purple-light);color:var(--purple);border:1px solid var(--purple)}
+.badge-overdue{background:var(--red-light);color:var(--red);border:1px solid var(--red)}
 .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
 @media(min-width:600px){.stat-grid{grid-template-columns:repeat(4,1fr)}}
 .stat-card{background:var(--gray1);border-radius:10px;padding:14px;border:1px solid var(--gray2);text-align:center}
@@ -72,15 +54,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
 .stat-card.c-green{border-color:var(--green);background:var(--green-light)}.stat-card.c-green .stat-num{color:var(--green)}
 .stat-card.c-red{border-color:var(--red);background:var(--red-light)}.stat-card.c-red .stat-num{color:var(--red)}
 .stat-card.c-yellow{border-color:var(--yellow);background:var(--yellow-light)}.stat-card.c-yellow .stat-num{color:var(--orange)}
-
-/* Tables */
-.data-table{width:100%;border-collapse:collapse;font-size:13px}
-.data-table th{background:var(--gray1);padding:8px 10px;text-align:left;font-weight:600;font-size:12px;color:var(--gray3);border-bottom:2px solid var(--gray2)}
-.data-table td{padding:9px 10px;border-bottom:1px solid var(--gray2);vertical-align:middle}
-.data-table tr:hover{background:#fafafa}
-.data-table .actions{display:flex;gap:6px}
-
-/* Employee card list */
 .emp-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray2)}
 .emp-row:last-child{border-bottom:none}
 .emp-avatar{width:36px;height:36px;border-radius:50%;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
@@ -88,60 +61,41 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
 .emp-name{font-weight:600;font-size:14px}
 .emp-meta{font-size:11px;color:var(--gray3)}
 .emp-status{flex-shrink:0}
-
-/* Attendance grid (manager) */
-.att-mgr-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.att-mgr-controls select{flex:1;min-width:120px}
-.att-mgr-table-wrap{overflow-x:auto}
-.att-mgr-table{border-collapse:collapse;font-size:11px;min-width:600px}
-.att-mgr-table th{background:var(--navy);color:#fff;padding:6px 8px;text-align:center;font-weight:600;position:sticky;top:0}
-.att-mgr-table td{padding:4px 6px;border:1px solid var(--gray2);text-align:center;cursor:pointer;transition:background .1s}
-.att-mgr-table td.emp-name-cell{text-align:left;background:var(--gray1);position:sticky;left:0;min-width:120px;font-weight:600;cursor:default}
-.att-mgr-table td.s-work{background:#c8e6c9;color:var(--green)}
-.att-mgr-table td.s-absent{background:#ffcdd2;color:var(--red)}
-.att-mgr-table td.s-sick,.att-mgr-table td.s-leave,.att-mgr-table td.s-vacation,.att-mgr-table td.s-maternity{background:#bbdefb;color:var(--blue)}
-.att-mgr-table td.s-late{background:#fff9c4;color:var(--orange)}
-.att-mgr-table td.s-holiday{background:#f5f5f5;color:var(--gray3)}
-.att-mgr-table td.s-empty{background:#fff;color:#ccc}
-.att-status-picker{position:fixed;background:#fff;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.2);padding:10px;z-index:200;display:none;min-width:160px}
-.att-status-picker button{display:block;width:100%;padding:8px 12px;text-align:left;background:none;border-radius:6px;font-size:13px;margin-bottom:2px}
-.att-status-picker button:hover{background:var(--gray1)}
-
-/* Leave approval */
-.leave-approval-item{background:var(--gray1);border-radius:10px;padding:14px;border:1px solid var(--gray2);margin-bottom:10px}
-.la-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-.la-name{font-weight:700;font-size:15px}
-.la-type{font-size:13px;color:var(--blue);font-weight:600}
-.la-dates{font-size:12px;color:var(--gray3);margin-top:2px}
-.la-reason{font-size:12px;color:#555;margin-bottom:10px}
-.la-actions{display:flex;gap:8px;flex-wrap:wrap}
-.la-note-input{margin-top:8px}
-
+/* Probation timeline */
+.prob-bar-wrap{height:6px;background:var(--gray2);border-radius:3px;margin-top:4px;position:relative}
+.prob-bar{height:100%;border-radius:3px;background:var(--purple)}
+.prob-bar.overdue{background:var(--red)}
 /* Payroll table */
-.pay-mgr-table{border-collapse:collapse;font-size:12px;width:100%;min-width:700px}
-.pay-mgr-table th{background:var(--navy);color:#fff;padding:8px;text-align:right}
+.pay-mgr-table{border-collapse:collapse;font-size:12px;width:100%;min-width:1000px}
+.pay-mgr-table th{background:var(--navy);color:#fff;padding:7px 6px;text-align:right;white-space:nowrap}
 .pay-mgr-table th:first-child,.pay-mgr-table th:nth-child(2){text-align:left}
-.pay-mgr-table td{padding:6px 8px;border-bottom:1px solid var(--gray2);text-align:right;vertical-align:middle}
+.pay-mgr-table td{padding:5px 6px;border-bottom:1px solid var(--gray2);text-align:right;vertical-align:middle}
 .pay-mgr-table td:first-child,.pay-mgr-table td:nth-child(2){text-align:left}
-.pay-mgr-table input[type=number]{width:90px;padding:4px 6px;font-size:12px;text-align:right}
-.pay-mgr-table tr:hover{background:#fafafa}
-.pay-mgr-footer{display:flex;gap:10px;margin-top:12px;justify-content:flex-end}
-
+.pay-mgr-table input[type=number]{width:80px;padding:3px 5px;font-size:12px;text-align:right}
+.pay-mgr-table tr:hover td{background:#fafafa}
+.pay-mgr-footer{display:flex;gap:8px;margin-top:12px;justify-content:flex-end;flex-wrap:wrap}
+/* YTD table */
+.ytd-table{width:100%;border-collapse:collapse;font-size:12px}
+.ytd-table th{background:var(--gray1);padding:7px 10px;text-align:right;font-size:11px;color:var(--gray3);border-bottom:2px solid var(--gray2)}
+.ytd-table th:first-child,.ytd-table th:nth-child(2){text-align:left}
+.ytd-table td{padding:6px 10px;border-bottom:1px solid var(--gray2);text-align:right}
+.ytd-table td:first-child,.ytd-table td:nth-child(2){text-align:left}
+.ytd-table tr:hover td{background:#fafafa}
+.ytd-total td{font-weight:700;background:var(--blue-light)!important;color:var(--navy)}
+/* Progress */
+.progress-wrap{height:6px;background:var(--gray2);border-radius:3px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;background:var(--blue);border-radius:3px;transition:width .3s}
 /* Misc */
 .divider{height:1px;background:var(--gray2);margin:10px 0}
 .section-title{font-size:12px;font-weight:700;color:var(--gray3);margin-bottom:8px;letter-spacing:.5px;text-transform:uppercase}
 .loading{text-align:center;padding:32px;color:var(--gray3);font-size:14px}
 .empty{text-align:center;padding:32px;color:var(--gray3)}
-.empty-icon{font-size:32px;margin-bottom:6px}
 .filter-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .filter-bar select,.filter-bar input{flex:1;min-width:120px}
-.month-bar{margin-bottom:12px}
-.month-bar select{font-weight:600;font-size:15px}
 .msg-box{margin-top:10px;padding:10px;border-radius:8px;font-size:13px;text-align:center;display:none}
 .msg-success{background:var(--green-light);color:var(--green)}
 .msg-error{background:var(--red-light);color:var(--red)}
-
-/* Edit employee modal */
+/* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none}
 .modal-overlay.open{display:flex;align-items:flex-end;justify-content:center}
 .modal-sheet{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:20px 16px}
@@ -150,96 +104,71 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
 .form-row label{display:block;font-size:11px;font-weight:600;color:var(--gray3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px}
 .form-group{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .modal-footer{display:flex;gap:10px;margin-top:16px;padding-top:12px;border-top:1px solid var(--gray2);justify-content:flex-end}
+/* Pill tab inside payroll */
+.pill-tabs{display:flex;gap:6px;margin-bottom:14px}
+.pill-tab{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;background:var(--gray1);color:var(--gray3);border:1px solid var(--gray2)}
+.pill-tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
 </style>
 </head>
 <body>
 
-<!-- ═══ APP ═══ -->
 <div id="appScreen" class="screen active">
   <div class="topbar">
     <div>
       <div class="topbar-name">Good Rich Power Plus</div>
-      <div class="topbar-role">👑 ระบบ HR Manager</div>
+      <div style="font-size:11px;opacity:.7">&#128081; ระบบ HR Manager</div>
     </div>
-    <div style="font-size:11px;opacity:.7">คุณปอ (Admin)</div>
+    <div style="font-size:11px;opacity:.7">&#128274; grp-hrm-2026</div>
   </div>
-
   <div class="container">
-    <div id="tabDashboard" class="tab-content"><div class="loading">⏳ กำลังโหลด...</div></div>
-    <div id="tabEmployees" class="tab-content" style="display:none"><div class="loading">⏳ กำลังโหลด...</div></div>
-    <div id="tabAttendance" class="tab-content" style="display:none"><div class="loading">⏳ กำลังโหลด...</div></div>
-    <div id="tabLeave" class="tab-content" style="display:none"><div class="loading">⏳ กำลังโหลด...</div></div>
-    <div id="tabPayroll" class="tab-content" style="display:none"><div class="loading">⏳ กำลังโหลด...</div></div>
-    <div id="tabRoles" class="tab-content" style="display:none"><div class="loading">⏳ กำลังโหลด...</div></div>
+    <div id="tabDashboard" class="tab-content"><div class="loading">&#9203;</div></div>
+    <div id="tabEmployees" class="tab-content" style="display:none"><div class="loading">&#9203;</div></div>
+    <div id="tabPayroll"   class="tab-content" style="display:none"><div class="loading">&#9203;</div></div>
   </div>
-
   <div class="bottom-nav" id="bottomNav">
-    <button data-tab="tabDashboard" class="active"><span class="nav-icon">📊</span>Dashboard</button>
-    <button data-tab="tabEmployees"><span class="nav-icon">👥</span>พนักงาน</button>
-    <button data-tab="tabAttendance"><span class="nav-icon">📅</span>เข้างาน</button>
-    <button data-tab="tabLeave"><span class="nav-icon">✅</span>อนุมัติลา</button>
-    <button data-tab="tabPayroll"><span class="nav-icon">💰</span>เงินเดือน</button>
-    <button data-tab="tabRoles" id="navRoles"><span class="nav-icon">🔑</span>สิทธิ์</button>
+    <button data-tab="tabDashboard" class="active"><span class="nav-icon">&#128202;</span>Dashboard</button>
+    <button data-tab="tabEmployees"><span class="nav-icon">&#128101;</span>พนักงาน</button>
+    <button data-tab="tabPayroll"><span class="nav-icon">&#128176;</span>เงินเดือน</button>
   </div>
-</div>
-
-<!-- Attendance status picker popup -->
-<div class="att-status-picker" id="statusPicker">
-  <button onclick="pickStatus('ทำงาน')">✅ ทำงาน</button>
-  <button onclick="pickStatus('มาสาย')">🟡 มาสาย</button>
-  <button onclick="pickStatus('ขาด')">❌ ขาด</button>
-  <button onclick="pickStatus('ลาป่วย')">🤒 ลาป่วย</button>
-  <button onclick="pickStatus('ลากิจ')">📋 ลากิจ</button>
-  <button onclick="pickStatus('ลาพักร้อน')">🏖️ ลาพักร้อน</button>
-  <button onclick="pickStatus('วันหยุด')">🗓️ วันหยุด</button>
-  <button onclick="pickStatus('')">— ล้างค่า</button>
-  <div class="divider"></div>
-  <button onclick="closeStatusPicker()" style="color:var(--gray3)">ยกเลิก</button>
 </div>
 
 <!-- Edit Employee Modal -->
 <div class="modal-overlay" id="editEmpModal">
   <div class="modal-sheet">
     <div class="modal-title">
-      <span>✏️ แก้ไขข้อมูลพนักงาน</span>
-      <button onclick="closeEditEmp()" style="background:none;font-size:22px;padding:0;line-height:1;color:var(--gray3)">×</button>
+      <span>&#9999; แก้ไขข้อมูลพนักงาน</span>
+      <button onclick="closeEditEmp()" style="background:none;font-size:22px;padding:0;color:var(--gray3)">&#215;</button>
     </div>
     <div id="editEmpForm"></div>
     <div id="editEmpMsg" class="msg-box"></div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeEditEmp()">ยกเลิก</button>
-      <button class="btn btn-primary" onclick="saveEditEmp()">💾 บันทึก</button>
+      <button class="btn btn-primary" onclick="saveEditEmp()">&#128190; บันทึก</button>
     </div>
   </div>
 </div>
 
 <script>
-// ============================================================
-// CONFIG — แก้ทั้ง 2 ค่านี้หลัง deploy Apps Script
-// ============================================================
-var API_URL = 'https://script.google.com/macros/s/AKfycbxkCL2iUmHTUhmyvr-YSq8YN__EinTnnv_2hSnrAhXRsqKEQhRTA-arDgO4zrBZo27s0w/exec';
-var MANAGER_KEY = 'grp-hrm-2026'; // ต้องตรงกับใน Code.gs
+// ─────────────────────────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────────────────────────
+var API_URL     = 'https://script.google.com/macros/s/AKfycbxkCL2iUmHTUhmyvr-YSq8YN__EinTnnv_2hSnrAhXRsqKEQhRTA-arDgO4zrBZo27s0w/exec';
+var MANAGER_KEY = 'grp-hrm-2026';
 
-// ============================================================
+// ─────────────────────────────────────────────────────────────
 // STATE
-// ============================================================
-var _months = [];
-var _nowMonth = '';
+// ─────────────────────────────────────────────────────────────
+var _months    = [];
+var _nowMonth  = '';
 var _employees = [];
 var _deptFilter = 'all';
-var _attMonth = '';
-var _attDept = 'all';
-var _attData = {}; // {empId: {date: status}}
-var _attEdits = {}; // {empId_date: status}
-var _pickerTarget = null; // {empId, date, tdEl}
-var _payMonth = '';
-var _payData = []; // payroll rows being edited
-var _leaveLoaded = false;
-var _empLoaded = false;
+var _payMonth  = '';
+var _payData   = [];
+var _paySubTab = 'payroll'; // 'payroll' | 'ytd'
 
-// ============================================================
+// ─────────────────────────────────────────────────────────────
 // UTILS
-// ============================================================
+// ─────────────────────────────────────────────────────────────
 function $(id) { return document.getElementById(id); }
 function esc(s) {
   return String(s == null ? '' : s)
@@ -247,765 +176,684 @@ function esc(s) {
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 function fmt(n) {
-  var num = parseFloat(n) || 0;
-  return num.toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
+  return (parseFloat(n)||0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 function fmtDate(d) {
-  if (!d) return '';
-  var s = String(d).substring(0, 10);
+  var s = String(d||'').substring(0,10);
   var p = s.split('-');
-  if (p.length === 3) return p[2] + '/' + p[1] + '/' + (parseInt(p[0]) + 543);
+  if (p.length===3) return p[2]+'/'+p[1]+'/'+(parseInt(p[0])+543);
   return s;
-}
-function statusBadge(s) {
-  var cls = {รออนุมัติ:'badge-pending',อนุมัติ:'badge-approved',ไม่อนุมัติ:'badge-rejected',ยกเลิก:'badge-cancelled'}[s] || 'badge-pending';
-  return '<span class="badge ' + cls + '">' + s + '</span>';
 }
 function _nowMonthStr() {
   var d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
 }
 function _monthLabel(m) {
   if (!m) return '';
   var p = m.split('-');
-  var names = ['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-  return names[parseInt(p[1])] + ' ' + (parseInt(p[0]) + 543);
-}
-function _buildMonthSelect(id, value) {
-  var html = '<select id="' + id + '">';
-  _months.forEach(function(m) {
-    html += '<option value="' + m + '"' + (m === value ? ' selected' : '') + '>' + _monthLabel(m) + '</option>';
-  });
-  return html + '</select>';
+  var N = ['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  return N[parseInt(p[1])]+' '+(parseInt(p[0])+543);
 }
 function _depts() {
-  var seen = {};
-  _employees.forEach(function(e) { if (e.dept) seen[e.dept] = true; });
-  return Object.keys(seen).sort();
+  var s={};_employees.forEach(function(e){if(e.dept)s[e.dept]=1;});return Object.keys(s).sort();
 }
-function _buildDeptSelect(id, value) {
-  var html = '<select id="' + id + '"><option value="all">ทุกแผนก</option>';
-  _depts().forEach(function(d) { html += '<option value="' + d + '"' + (d === value ? ' selected' : '') + '>' + d + '</option>'; });
-  return html + '</select>';
+function _buildDeptSelect(id,val) {
+  var h='<select id="'+id+'"><option value="all">ทุกแผนก</option>';
+  _depts().forEach(function(d){h+='<option value="'+esc(d)+'"'+(d===val?' selected':'')+'>'+esc(d)+'</option>';});
+  return h+'</select>';
 }
-
+// Thai progressive tax helper
+function _calcMonthlyTax(monthlyIncome) {
+  var annual = monthlyIncome * 12;
+  var deduct = Math.min(annual * 0.5, 100000) + 60000;
+  var taxable = Math.max(0, annual - deduct);
+  var brackets = [[150000,0],[300000,.05],[500000,.10],[750000,.15],[1000000,.20],[2000000,.25],[5000000,.30],[Infinity,.35]];
+  var tax=0, prev=0;
+  for(var i=0;i<brackets.length;i++){
+    var lim=brackets[i][0],rate=brackets[i][1];
+    if(taxable<=prev) break;
+    tax += (Math.min(taxable,lim)-prev)*rate;
+    prev=lim;
+  }
+  return Math.round(tax/12);
+}
 async function apiGet(action, params) {
-  var url = API_URL + '?action=' + encodeURIComponent(action)
-    + '&empId=MANAGER&credential=' + encodeURIComponent(MANAGER_KEY);
-  params = params || {};
-  Object.keys(params).forEach(function(k) {
-    url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(params[k] || '');
-  });
-  var res = await fetch(url);
-  var text = await res.text();
-  try { return JSON.parse(text); }
-  catch(e) { return {success:false, error:'Response error: ' + text.substring(0, 100)}; }
+  var url = API_URL+'?action='+encodeURIComponent(action)+'&empId=MANAGER&credential='+encodeURIComponent(MANAGER_KEY);
+  Object.keys(params||{}).forEach(function(k){url+='&'+encodeURIComponent(k)+'='+encodeURIComponent(params[k]||'');});
+  var r=await fetch(url), t=await r.text();
+  try{return JSON.parse(t);}catch(e){return{success:false,error:'Response error: '+t.substring(0,80)};}
 }
-
 async function apiPost(payload) {
-  payload.empId = 'MANAGER';
-  payload.credential = MANAGER_KEY;
-  var res = await fetch(API_URL, {
-    method:'POST',
-    headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body:JSON.stringify(payload)
-  });
-  var text = await res.text();
-  try { return JSON.parse(text); }
-  catch(e) { return {success:false, error:'Response error'}; }
+  payload.empId='MANAGER'; payload.credential=MANAGER_KEY;
+  var r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+  var t=await r.text();
+  try{return JSON.parse(t);}catch(e){return{success:false,error:'Response error'};}
 }
 
-// ============================================================
-// AUTO INIT — ไม่มี login, โหลดหน้าเลย
-// ============================================================
+// ─────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async function() {
-  $('tabDashboard').innerHTML = '<div class="loading">⏳ กำลังโหลด...</div>';
   await _loadMonths();
   await _loadEmployees();
   loadDashboard();
 });
-
-// ============================================================
-// NAV
-// ============================================================
 $('bottomNav').addEventListener('click', function(e) {
-  var btn = e.target.closest('button[data-tab]');
-  if (!btn) return;
-  var tab = btn.dataset.tab;
-  document.querySelectorAll('.bottom-nav button').forEach(function(b) { b.classList.remove('active'); });
+  var btn=e.target.closest('button[data-tab]'); if(!btn) return;
+  var tab=btn.dataset.tab;
+  document.querySelectorAll('.bottom-nav button').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
-  document.querySelectorAll('.tab-content').forEach(function(t) { t.style.display = 'none'; });
-  $(tab).style.display = '';
-  if (tab === 'tabDashboard') loadDashboard();
-  if (tab === 'tabEmployees') loadEmployees();
-  if (tab === 'tabAttendance') loadAttendanceMgr();
-  if (tab === 'tabLeave') loadLeaveApproval();
-  if (tab === 'tabPayroll') loadPayrollMgr();
-  if (tab === 'tabRoles') loadRoleManager();
+  document.querySelectorAll('.tab-content').forEach(function(t){t.style.display='none';});
+  $(tab).style.display='';
+  if(tab==='tabDashboard') loadDashboard();
+  if(tab==='tabEmployees') loadEmployees();
+  if(tab==='tabPayroll')   loadPayrollMgr();
 });
-
-// Close picker on outside click
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('#statusPicker') && !e.target.closest('.att-mgr-table td:not(.emp-name-cell)')) {
-    closeStatusPicker();
-  }
-});
-
-// ============================================================
-// INIT DATA
-// ============================================================
 async function _loadMonths() {
-  var r = await apiGet('getMonths', {});
-  if (r.success) {
-    _months = r.data;
-    _attMonth = _months[0] || _nowMonthStr();
-    _payMonth = _months[0] || _nowMonthStr();
-    _nowMonth = _nowMonthStr();
-    if (_months.indexOf(_nowMonth) < 0) _months.unshift(_nowMonth);
+  var r=await apiGet('getMonths',{});
+  if(r.success){
+    _months=r.data; _payMonth=_months[0]||_nowMonthStr();
+    _nowMonth=_nowMonthStr();
+    if(_months.indexOf(_nowMonth)<0) _months.unshift(_nowMonth);
   }
 }
-
 async function _loadEmployees() {
-  var r = await apiGet('getEmployeeList', {});
-  if (r.success) { _employees = r.data; _empLoaded = true; }
+  var r=await apiGet('getEmployeeList',{});
+  if(r.success) _employees=r.data;
 }
 
-// ============================================================
+// ─────────────────────────────────────────────────────────────
 // TAB: DASHBOARD
-// ============================================================
+// ─────────────────────────────────────────────────────────────
 async function loadDashboard() {
-  $('tabDashboard').innerHTML = '<div class="loading">⏳ กำลังโหลด...</div>';
-  var pendingR = await apiGet('getPendingLeaves', {});
-  var pending = pendingR.success ? pendingR.data : [];
+  $('tabDashboard').innerHTML='<div class="loading">&#9203; กำลังโหลด...</div>';
+  var payR=await apiGet('getPayrollSummary',{month:_nowMonth});
+  var payRows=payR.success?payR.data:[];
+  var confirmed=payRows.filter(function(r){return r.status==='confirmed';});
+  var totalNet=confirmed.reduce(function(s,r){return s+(parseFloat(r.netPay)||0);},0);
+  var active=_employees.filter(function(e){return e.status!=='ลาออก'&&e.status!=='พ้นสภาพ';});
+  var probation=active.filter(function(e){return e.status==='พนักงานทดลองงาน';});
 
-  var active = _employees.filter(function(e) { return e.status !== 'ลาออก' && e.status !== 'พ้นสภาพ'; });
-  var probation = active.filter(function(e) { return e.status === 'พนักงานทดลองงาน'; });
+  var html='<div class="card"><div class="card-header"><h2>&#128202; Dashboard</h2><p>'+_monthLabel(_nowMonth)+'</p></div>';
+  html+='<div class="card-body"><div class="stat-grid">';
+  html+='<div class="stat-card c-blue"><div class="stat-num">'+active.length+'</div><div class="stat-label">พนักงานปัจจุบัน</div></div>';
+  html+='<div class="stat-card c-yellow"><div class="stat-num">'+probation.length+'</div><div class="stat-label">ทดลองงาน</div></div>';
+  html+='<div class="stat-card c-green"><div class="stat-num">'+confirmed.length+'</div><div class="stat-label">Confirmed เดือนนี้</div></div>';
+  html+='<div class="stat-card c-red"><div class="stat-num">'+_depts().length+'</div><div class="stat-label">แผนก</div></div>';
+  html+='</div>';
+  if(totalNet>0){
+    html+='<div style="background:var(--blue-light);border-radius:10px;padding:14px;text-align:center;border:1px solid var(--blue)">';
+    html+='<div style="font-size:12px;color:var(--gray3);margin-bottom:4px">ยอดเงินเดือนสุทธิรวมเดือนนี้</div>';
+    html+='<div style="font-size:24px;font-weight:700;color:var(--navy)">&#3647;'+fmt(totalNet)+'</div></div>';
+  }
+  html+='</div></div>';
 
-  var html = '<div class="card"><div class="card-header"><h2>📊 Dashboard</h2><p>' + _monthLabel(_nowMonth) + '</p></div>';
-  html += '<div class="card-body">';
-  html += '<div class="stat-grid">';
-  html += '<div class="stat-card c-blue"><div class="stat-num">' + active.length + '</div><div class="stat-label">พนักงานปัจจุบัน</div></div>';
-  html += '<div class="stat-card c-yellow"><div class="stat-num">' + probation.length + '</div><div class="stat-label">ทดลองงาน</div></div>';
-  html += '<div class="stat-card c-red"><div class="stat-num">' + pending.length + '</div><div class="stat-label">รออนุมัติลา</div></div>';
-  html += '<div class="stat-card c-green"><div class="stat-num">' + _depts().length + '</div><div class="stat-label">แผนก</div></div>';
-  html += '</div>';
-  html += '</div></div>';
-
-  // Pending leaves summary
-  if (pending.length > 0) {
-    html += '<div class="card"><div class="card-header"><h2>⏰ รออนุมัติการลา</h2></div><div class="card-body">';
-    pending.slice(0, 5).forEach(function(r) {
-      html += '<div class="emp-row">';
-      html += '<div class="emp-avatar">' + (r.name || '?').charAt(r.name.indexOf(' ') + 1 || 0) + '</div>';
-      html += '<div class="emp-info"><div class="emp-name">' + r.name + '</div>';
-      html += '<div class="emp-meta">' + r.leaveType + ' · ' + fmtDate(r.startDate) + ' – ' + fmtDate(r.endDate) + ' (' + r.days + ' วัน)</div></div>';
-      html += '<div class="emp-status">' + statusBadge(r.status) + '</div></div>';
+  // Probation alert — milestones 30/60/90/120 days
+  var today=new Date(); today.setHours(0,0,0,0);
+  var probAlerts=[];
+  probation.forEach(function(e){
+    if(!e.startDate) return;
+    var start=new Date(String(e.startDate).substring(0,10));
+    if(isNaN(start.getTime())) return;
+    var days=Math.floor((today-start)/(1000*60*60*24));
+    if(days<0||days>150) return; // ignore very new (<today) or way past
+    var milestones=[30,60,90,120];
+    milestones.forEach(function(ms){
+      var diff=days-ms; // -7..+3 window
+      if(diff>=-7&&diff<=3){
+        probAlerts.push({emp:e,days:days,milestone:ms,diff:diff,overdue:days>120});
+      }
     });
-    if (pending.length > 5) html += '<div style="text-align:center;padding:8px;font-size:12px;color:var(--blue)">+ อีก ' + (pending.length - 5) + ' รายการ</div>';
-    html += '</div></div>';
+    if(days>120&&days<=150){
+      probAlerts.push({emp:e,days:days,milestone:120,diff:days-120,overdue:true});
+    }
+  });
+  // De-duplicate (closest milestone per employee)
+  var seen={};
+  probAlerts=probAlerts.filter(function(a){
+    var k=a.emp.empId; if(seen[k]) return false; seen[k]=1; return true;
+  });
+
+  if(probAlerts.length>0){
+    html+='<div class="card"><div class="card-header" style="background:linear-gradient(135deg,var(--purple),#4a0080)">';
+    html+='<h2>&#9888; แจ้งเตือนทดลองงาน ('+probAlerts.length+' คน)</h2>';
+    html+='<p>พนักงานที่ใกล้ถึง Milestone 30/60/90/120 วัน (±7 วัน)</p></div>';
+    html+='<div class="card-body">';
+    probAlerts.forEach(function(a){
+      var pct=Math.min(100,Math.round((a.days/120)*100));
+      var colorClass=a.overdue?'overdue':'';
+      var msLabel=a.milestone===120?'ครบทดลองงาน':a.milestone+' วัน';
+      var diffLabel=a.diff===0?'วันนี้':(a.diff>0?'เลย '+a.diff+' วัน':'อีก '+Math.abs(a.diff)+' วัน');
+      html+='<div class="emp-row">';
+      html+='<div class="emp-avatar" style="background:var(--purple-light);color:var(--purple)">'+esc((a.emp.name||'?').replace(/^(นาย|นาง|นางสาว)/,'').trim().charAt(0))+'</div>';
+      html+='<div class="emp-info">';
+      html+='<div class="emp-name">'+esc(a.emp.name)+'</div>';
+      html+='<div class="emp-meta">'+esc(a.emp.empId)+' · '+esc(a.emp.dept||'')+'</div>';
+      html+='<div class="emp-meta">วันเริ่ม '+fmtDate(a.emp.startDate)+' · ผ่านมา '+a.days+' วัน</div>';
+      html+='<div class="prob-bar-wrap"><div class="prob-bar '+colorClass+'" style="width:'+pct+'%"></div></div>';
+      html+='</div>';
+      html+='<div style="text-align:right;flex-shrink:0">';
+      html+='<span class="badge '+(a.overdue?'badge-overdue':'badge-probation')+'">'+msLabel+'</span>';
+      html+='<div style="font-size:11px;margin-top:3px;color:'+(a.overdue?'var(--red)':'var(--purple)')+'">'+diffLabel+'</div>';
+      html+='</div></div>';
+    });
+    html+='</div></div>';
   }
 
-  // Dept breakdown
-  html += '<div class="card"><div class="card-header"><h2>👥 พนักงานแยกแผนก</h2></div><div class="card-body">';
-  var deptCount = {};
-  active.forEach(function(e) { deptCount[e.dept || 'ไม่ระบุ'] = (deptCount[e.dept || 'ไม่ระบุ'] || 0) + 1; });
-  Object.keys(deptCount).sort().forEach(function(d) {
-    html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--gray2);font-size:13px">';
-    html += '<span>' + d + '</span><span style="font-weight:600;color:var(--blue)">' + deptCount[d] + ' คน</span></div>';
+  // Dept breakdown with salary
+  html+='<div class="card"><div class="card-header"><h2>&#128101; พนักงานแยกแผนก</h2></div><div class="card-body">';
+  var dc={},ds={};
+  active.forEach(function(e){var d=e.dept||'ไม่ระบุ';dc[d]=(dc[d]||0)+1;ds[d]=(ds[d]||0)+(parseFloat(e.salary)||0);});
+  Object.keys(dc).sort().forEach(function(d){
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--gray2);font-size:13px">';
+    html+='<span>'+esc(d)+'</span>';
+    html+='<span><span style="font-weight:600;color:var(--blue)">'+dc[d]+' คน</span> <span style="color:var(--gray3);font-size:11px">&#3647;'+fmt(ds[d])+'</span></span>';
+    html+='</div>';
   });
-  html += '</div></div>';
-
-  $('tabDashboard').innerHTML = html;
+  html+='</div></div>';
+  $('tabDashboard').innerHTML=html;
 }
 
-// ============================================================
+// ─────────────────────────────────────────────────────────────
 // TAB: EMPLOYEES
-// ============================================================
+// ─────────────────────────────────────────────────────────────
 function loadEmployees() {
-  var active = _employees;
-  var depts = _depts();
-
-  var html = '<div class="card"><div class="card-header"><h2>👥 รายชื่อพนักงาน</h2><p>' + active.length + ' คนทั้งหมด</p></div>';
-  html += '<div class="card-body">';
-  html += '<div class="filter-bar">';
-  html += '<input type="text" id="empSearch" placeholder="ค้นหาชื่อ..." oninput="filterEmployees()">';
-  html += _buildDeptSelect('empDeptFilter', _deptFilter);
-  html += '</div>';
-  html += '<div id="empList">' + _renderEmpList(active) + '</div>';
-  html += '</div></div>';
-
-  $('tabEmployees').innerHTML = html;
-  $('empDeptFilter').addEventListener('change', function() { _deptFilter = this.value; filterEmployees(); });
+  var html='<div class="card"><div class="card-header"><h2>&#128101; รายชื่อพนักงาน</h2><p>'+_employees.length+' คนทั้งหมด</p></div>';
+  html+='<div class="card-body"><div class="filter-bar">';
+  html+='<input type="text" id="empSearch" placeholder="ค้นหาชื่อ..." oninput="filterEmployees()">';
+  html+=_buildDeptSelect('empDeptFilter',_deptFilter);
+  html+='</div><div id="empList">'+_renderEmpList(_employees)+'</div></div></div>';
+  $('tabEmployees').innerHTML=html;
+  $('empDeptFilter').addEventListener('change',function(){_deptFilter=this.value;filterEmployees();});
 }
-
 function filterEmployees() {
-  var search = ($('empSearch') ? $('empSearch').value : '').toLowerCase();
-  var dept = _deptFilter;
-  var filtered = _employees.filter(function(e) {
-    var nameMatch = !search || e.name.toLowerCase().indexOf(search) >= 0 || (e.nickname || '').toLowerCase().indexOf(search) >= 0;
-    var deptMatch = dept === 'all' || e.dept === dept;
-    return nameMatch && deptMatch;
+  var s=($('empSearch')?$('empSearch').value:'').toLowerCase();
+  var dept=_deptFilter;
+  var f=_employees.filter(function(e){
+    return (!s||e.name.toLowerCase().indexOf(s)>=0||(e.nickname||'').toLowerCase().indexOf(s)>=0)
+        &&(dept==='all'||e.dept===dept);
   });
-  if ($('empList')) $('empList').innerHTML = _renderEmpList(filtered);
+  if($('empList')) $('empList').innerHTML=_renderEmpList(f);
 }
-
 function _renderEmpList(list) {
-  if (list.length === 0) return '<div class="empty"><div class="empty-icon">🔍</div>ไม่พบพนักงาน</div>';
-  var statusColors = {'พนักงานประจำ':'var(--green)','พนักงานทดลองงาน':'var(--orange)','ลาออก':'var(--red)','พ้นสภาพ':'var(--gray3)','เกษียณอายุ':'var(--purple)'};
-  return list.map(function(e) {
-    var initials = (e.name || '').replace(/^(นาย|นาง|นางสาว|น\.ส\.|ดร\.|)/,'').trim().charAt(0);
-    var color = statusColors[e.status] || 'var(--blue)';
-    return '<div class="emp-row">' +
-      '<div class="emp-avatar">' + initials + '</div>' +
-      '<div class="emp-info">' +
-        '<div class="emp-name">' + e.name + (e.nickname ? ' <span style="color:var(--gray3);font-weight:400;font-size:12px">(' + e.nickname + ')</span>' : '') + '</div>' +
-        '<div class="emp-meta">' + e.empId + ' · ' + (e.dept || 'ไม่ระบุแผนก') + ' · ' + (e.position || '') + '</div>' +
-        '<div class="emp-meta">เงินเดือน ฿' + fmt(e.salary) + '</div>' +
-      '</div>' +
-      '<div class="emp-status" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
-        '<span style="font-size:11px;color:' + color + ';font-weight:600">' + (e.status || '') + '</span>' +
-        '<button class="btn btn-secondary btn-sm" onclick="openEditEmp(\'' + e.empId + '\')">✏️ แก้ไข</button>' +
-      '</div>' +
+  if(!list.length) return '<div class="empty"><div class="empty-icon">&#128269;</div>ไม่พบพนักงาน</div>';
+  var sColors={'พนักงานประจำ':'var(--green)','พนักงานทดลองงาน':'var(--purple)','ลาออก':'var(--red)','พ้นสภาพ':'var(--gray3)'};
+  return list.map(function(e){
+    var init=(e.name||'').replace(/^(นาย|นาง|นางสาว)/,'').trim().charAt(0);
+    var col=sColors[e.status]||'var(--blue)';
+    var today=new Date(); today.setHours(0,0,0,0);
+    var probHtml='';
+    if(e.status==='พนักงานทดลองงาน'&&e.startDate){
+      var start=new Date(String(e.startDate).substring(0,10));
+      if(!isNaN(start.getTime())){
+        var days=Math.floor((today-start)/(1000*60*60*24));
+        var pct=Math.min(100,Math.round((days/120)*100));
+        var nextMs=days<30?30:days<60?60:days<90?90:120;
+        var daysLeft=nextMs-days;
+        probHtml='<div class="emp-meta" style="margin-top:2px">ทดลองงาน '+days+' วัน · '+(daysLeft>0?'อีก '+daysLeft+' วันถึง '+nextMs+'วัน':'ถึง '+nextMs+'วันแล้ว')+'</div>';
+        probHtml+='<div class="prob-bar-wrap"><div class="prob-bar'+(days>120?' overdue':'')+'" style="width:'+pct+'%"></div></div>';
+      }
+    }
+    return '<div class="emp-row">'+
+      '<div class="emp-avatar">'+esc(init)+'</div>'+
+      '<div class="emp-info">'+
+        '<div class="emp-name">'+esc(e.name)+(e.nickname?' <span style="color:var(--gray3);font-weight:400;font-size:12px">('+esc(e.nickname)+')</span>':'')+' </div>'+
+        '<div class="emp-meta">'+esc(e.empId)+' · '+esc(e.dept||'ไม่ระบุ')+' · '+esc(e.position||'')+'</div>'+
+        '<div class="emp-meta">&#3647;'+fmt(e.salary)+(e.email?' · &#128231; '+esc(e.email):' · <span style="color:var(--red)">ไม่มีอีเมล</span>')+'</div>'+
+        probHtml+
+      '</div>'+
+      '<div class="emp-status" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+
+        '<span style="font-size:11px;color:'+col+';font-weight:600">'+esc(e.status||'')+'</span>'+
+        '<button class="btn btn-secondary btn-sm" onclick="openEditEmp(\''+esc(e.empId)+'\')">&#9999; แก้ไข</button>'+
+      '</div>'+
     '</div>';
   }).join('');
 }
 
-// ============================================================
-// TAB: ATTENDANCE (Manager)
-// ============================================================
-async function loadAttendanceMgr() {
-  $('tabAttendance').innerHTML = '<div class="loading">⏳ กำลังโหลดตารางเข้างาน...</div>';
-  var r = await apiGet('getAttendanceSummary', {month: _attMonth, dept: _attDept});
-  if (!r.success) { $('tabAttendance').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>' + r.error + '</div>'; return; }
-  _renderAttendanceMgr(r.data);
-}
-
-function _renderAttendanceMgr(data) {
-  var month = _attMonth;
-  var parts = month.split('-');
-  var year = parseInt(parts[0]);
-  var mon = parseInt(parts[1]);
-  var daysInMonth = new Date(year, mon, 0).getDate();
-
-  // Build att map from data
-  _attData = {};
-  data.forEach(function(emp) {
-    _attData[emp.empId] = {};
-    (emp.attendance || []).forEach(function(a) {
-      var d = parseInt(String(a.date).split('-')[2]);
-      _attData[emp.empId][d] = a.status;
-    });
-  });
-  _attEdits = {};
-
-  var weekDays = ['อา','จ','อ','พ','พฤ','ศ','ส'];
-  var statusClass = {ทำงาน:'s-work',ขาด:'s-absent',ลาป่วย:'s-sick',ลากิจ:'s-leave',ลาพักร้อน:'s-vacation',วันหยุด:'s-holiday',มาสาย:'s-late',ลาคลอด:'s-maternity'};
-
-  var html = '<div class="card"><div class="card-header"><h2>📅 บันทึกการเข้างาน</h2></div>';
-  html += '<div class="card-body">';
-  html += '<div class="att-mgr-controls">';
-  html += _buildMonthSelect('attMgrMon', month);
-  html += _buildDeptSelect('attMgrDept', _attDept);
-  html += '</div>';
-
-  if (data.length === 0) {
-    html += '<div class="empty"><div class="empty-icon">👤</div>ไม่พบพนักงาน</div>';
-  } else {
-    html += '<div class="att-mgr-table-wrap"><table class="att-mgr-table">';
-    // Header row: employee name + dates
-    html += '<tr><th style="text-align:left;min-width:120px">พนักงาน</th>';
-    for (var d = 1; d <= daysInMonth; d++) {
-      var dow = new Date(year, mon - 1, d).getDay();
-      var isWeekend = dow === 0 || dow === 6;
-      html += '<th style="min-width:28px;' + (isWeekend ? 'opacity:.5' : '') + '">' + d + '<br><span style="font-size:9px">' + weekDays[dow] + '</span></th>';
-    }
-    html += '</tr>';
-
-    data.forEach(function(emp) {
-      html += '<tr><td class="emp-name-cell">' + (emp.name || emp.empId) + '<br><span style="font-size:10px;color:var(--gray3)">' + emp.empId + '</span></td>';
-      for (var d = 1; d <= daysInMonth; d++) {
-        var dow = new Date(year, mon - 1, d).getDay();
-        var isWeekend = dow === 0 || dow === 6;
-        var st = (_attData[emp.empId] || {})[d] || (isWeekend ? 'วันหยุด' : '');
-        var cls = statusClass[st] || (st ? '' : 's-empty');
-        var shortLabels = {ทำงาน:'✓',ขาด:'✗',ลาป่วย:'ป',ลากิจ:'ก',ลาพักร้อน:'พ',วันหยุด:'•',มาสาย:'ส',ลาคลอด:'ค','':''};
-        var label = shortLabels[st] !== undefined ? shortLabels[st] : st.charAt(0);
-        html += '<td class="' + cls + '" data-emp="' + emp.empId + '" data-day="' + d + '" onclick="openStatusPicker(this,\'' + emp.empId + '\',' + d + ')">' + label + '</td>';
-      }
-      html += '</tr>';
-    });
-    html += '</table></div>';
-
-    html += '<div style="display:flex;gap:10px;margin-top:14px;justify-content:flex-end">';
-    html += '<button class="btn btn-primary" onclick="saveAttendance()">💾 บันทึกการแก้ไข</button>';
-    html += '</div>';
-    html += '<div id="attMgrMsg" class="msg-box"></div>';
-  }
-
-  html += '</div></div>';
-  $('tabAttendance').innerHTML = html;
-
-  $('attMgrMon').addEventListener('change', function() { _attMonth = this.value; loadAttendanceMgr(); });
-  $('attMgrDept').addEventListener('change', function() { _attDept = this.value; loadAttendanceMgr(); });
-}
-
-function openStatusPicker(td, empId, day) {
-  _pickerTarget = {empId: empId, day: day, td: td};
-  var rect = td.getBoundingClientRect();
-  var picker = $('statusPicker');
-  picker.style.display = 'block';
-  var top = rect.bottom + window.scrollY + 4;
-  var left = rect.left + window.scrollX;
-  if (left + 180 > window.innerWidth) left = window.innerWidth - 184;
-  picker.style.top = top + 'px';
-  picker.style.left = left + 'px';
-}
-
-function closeStatusPicker() { $('statusPicker').style.display = 'none'; _pickerTarget = null; }
-
-function pickStatus(status) {
-  if (!_pickerTarget) return;
-  var td = _pickerTarget.td;
-  var empId = _pickerTarget.empId;
-  var day = _pickerTarget.day;
-  var statusClass = {ทำงาน:'s-work',ขาด:'s-absent',ลาป่วย:'s-sick',ลากิจ:'s-leave',ลาพักร้อน:'s-vacation',วันหยุด:'s-holiday',มาสาย:'s-late',ลาคลอด:'s-maternity'};
-  var shortLabels = {ทำงาน:'✓',ขาด:'✗',ลาป่วย:'ป',ลากิจ:'ก',ลาพักร้อน:'พ',วันหยุด:'•',มาสาย:'ส',ลาคลอด:'ค','':''};
-  // Remove existing status classes
-  Object.values(statusClass).concat(['s-empty']).forEach(function(c) { td.classList.remove(c); });
-  td.classList.add(statusClass[status] || 's-empty');
-  td.textContent = shortLabels[status] !== undefined ? shortLabels[status] : status;
-  _attEdits[empId + '_' + day] = status;
-  if (!_attData[empId]) _attData[empId] = {};
-  _attData[empId][day] = status;
-  closeStatusPicker();
-}
-
-async function saveAttendance() {
-  var keys = Object.keys(_attEdits);
-  if (keys.length === 0) { alert('ยังไม่มีการแก้ไข'); return; }
-  var msg = $('attMgrMsg');
-  msg.className = 'msg-box'; msg.textContent = 'กำลังบันทึก...'; msg.style.display = 'block';
-
-  var month = _attMonth;
-  var parts = month.split('-');
-  var year = parseInt(parts[0]);
-  var mon = parseInt(parts[1]);
-
-  var promises = keys.map(function(k) {
-    var split = k.split('_');
-    var empId = split[0];
-    var day = parseInt(split[1]);
-    var dateStr = year + '-' + String(mon).padStart(2,'0') + '-' + String(day).padStart(2,'0');
-    return apiPost({action:'markAttendance', targetEmpId:empId, date:dateStr, status:_attEdits[k]});
-  });
-
-  var results = await Promise.all(promises);
-  var errors = results.filter(function(r) { return !r.success; });
-  if (errors.length === 0) {
-    _attEdits = {};
-    msg.className = 'msg-box msg-success'; msg.textContent = '✅ บันทึก ' + keys.length + ' รายการเรียบร้อย';
-  } else {
-    msg.className = 'msg-box msg-error'; msg.textContent = '❌ บันทึกไม่สำเร็จ ' + errors.length + ' รายการ';
-  }
-  setTimeout(function() { msg.style.display = 'none'; }, 3000);
-}
-
-// ============================================================
-// TAB: LEAVE APPROVAL
-// ============================================================
-async function loadLeaveApproval() {
-  _leaveLoaded = true;
-  $('tabLeave').innerHTML = '<div class="loading">⏳ กำลังโหลด...</div>';
-  var r = await apiGet('getPendingLeaves', {});
-  if (!r.success) { $('tabLeave').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>' + r.error + '</div>'; return; }
-  _renderLeaveApproval(r.data);
-}
-
-function _renderLeaveApproval(list) {
-  var html = '<div class="card"><div class="card-header"><h2>✅ อนุมัติการลา</h2>';
-  html += '<p>' + list.length + ' รายการรออนุมัติ</p></div><div class="card-body">';
-  if (list.length === 0) {
-    html += '<div class="empty"><div class="empty-icon">🎉</div>ไม่มีรายการรออนุมัติ</div>';
-  } else {
-    list.forEach(function(r) {
-      html += '<div class="leave-approval-item">';
-      html += '<div class="la-header"><div>';
-      html += '<div class="la-name">' + r.name + '</div>';
-      html += '<div class="la-type">' + r.leaveType + ' · ' + r.days + ' วัน</div>';
-      html += '<div class="la-dates">' + fmtDate(r.startDate) + ' – ' + fmtDate(r.endDate) + '</div></div>';
-      html += statusBadge(r.status) + '</div>';
-      if (r.reason) html += '<div class="la-reason">เหตุผล: ' + r.reason + '</div>';
-      html += '<textarea id="note_' + r.requestId + '" class="la-note-input" rows="2" placeholder="หมายเหตุ HR (ถ้ามี)..."></textarea>';
-      html += '<div class="la-actions" style="margin-top:8px">';
-      html += '<button class="btn btn-success btn-sm" onclick="approveLeave(\'' + r.requestId + '\',\'อนุมัติ\')">✅ อนุมัติ</button>';
-      html += '<button class="btn btn-danger btn-sm" onclick="approveLeave(\'' + r.requestId + '\',\'ไม่อนุมัติ\')">❌ ไม่อนุมัติ</button>';
-      html += '</div></div>';
-    });
-  }
-  html += '</div></div>';
-  $('tabLeave').innerHTML = html;
-}
-
-async function approveLeave(requestId, decision) {
-  var noteEl = $('note_' + requestId);
-  var note = noteEl ? noteEl.value.trim() : '';
-  var r = await apiPost({action:'approveLeave', requestId:requestId, decision:decision, hrNote:note});
-  if (r.success) {
-    _leaveLoaded = false;
-    loadLeaveApproval();
-  } else {
-    alert('❌ ' + r.error);
-  }
-}
-
-// ============================================================
-// TAB: PAYROLL MANAGER
-// ============================================================
+// ─────────────────────────────────────────────────────────────
+// TAB: PAYROLL
+// ─────────────────────────────────────────────────────────────
 async function loadPayrollMgr() {
-  $('tabPayroll').innerHTML = '<div class="loading">⏳ กำลังโหลด...</div>';
-  // Load existing payroll for month
-  var existR = await apiGet('getPayrollSummary', {month: _payMonth});
-  var existing = {};
-  if (existR.success) existR.data.forEach(function(r) { existing[r.empId] = r; });
+  $('tabPayroll').innerHTML='<div class="loading">&#9203; กำลังโหลด...</div>';
+  if(_paySubTab==='ytd'){ _renderYTDView(); return; }
 
-  // Build rows from active employees + existing data
-  var active = _employees.filter(function(e) { return e.status !== 'ลาออก' && e.status !== 'พ้นสภาพ'; });
-  _payData = active.map(function(e) {
-    var ex = existing[e.empId] || {};
+  var existR=await apiGet('getPayrollSummary',{month:_payMonth});
+  var existing={};
+  if(existR.success) existR.data.forEach(function(r){existing[r.empId]=r;});
+
+  var active=_employees.filter(function(e){return e.status!=='ลาออก'&&e.status!=='พ้นสภาพ';});
+  _payData=active.map(function(e){
+    var ex=existing[e.empId]||{};
+    var baseAllowances=(parseFloat(e.phoneAllow)||0)+(parseFloat(e.skillAllow)||0)+(parseFloat(e.proAllow)||0)+(parseFloat(e.travelAllow)||0);
+    var allowances=ex.allowances!==undefined?ex.allowances:baseAllowances;
+    var ti=(parseFloat(ex.salary!==undefined?ex.salary:e.salary)||0)+(parseFloat(allowances)||0)+
+           (parseFloat(ex.otPay)||0)+(parseFloat(ex.otherIncome)||0)+
+           (parseFloat(ex.birthdayAllow)||0)+(parseFloat(ex.weddingAllow)||0)+(parseFloat(ex.specialAcctAllow)||0);
     return {
-      empId: e.empId, name: e.name, dept: e.dept, position: e.position,
-      month: _payMonth,
-      salary: ex.salary !== undefined ? ex.salary : e.salary,
-      allowances: ex.allowances !== undefined ? ex.allowances : 0,
-      otPay: ex.otPay || 0,
-      otherIncome: ex.otherIncome || 0,
-      otherDeduct: ex.otherDeduct || 0,
-      note: ex.note || '',
-      status: ex.status || 'draft'
+      empId:e.empId, name:e.name, dept:e.dept, position:e.position, month:_payMonth,
+      salary:      ex.salary!==undefined ? ex.salary : e.salary,
+      allowances:  allowances,
+      otPay:       ex.otPay||0,
+      otherIncome: ex.otherIncome||0,
+      birthdayAllow:    ex.birthdayAllow||0,
+      weddingAllow:     ex.weddingAllow||0,
+      specialAcctAllow: ex.specialAcctAllow||0,
+      otherDeduct: ex.otherDeduct||0,
+      withholdingTax: ex.withholdingTax!==undefined ? ex.withholdingTax : _calcMonthlyTax(ti),
+      note:        ex.note||'',
+      status:      ex.status||'draft'
     };
   });
-
   _renderPayrollMgr();
 }
 
 function _renderPayrollMgr() {
-  var html = '<div class="card"><div class="card-header"><h2>💰 จัดการเงินเดือน</h2></div>';
-  html += '<div class="card-body">';
-  html += '<div class="month-bar">' + _buildYearMonthSelects(_payMonth) + '</div>';
-  html += '<div style="overflow-x:auto"><table class="pay-mgr-table">';
-  html += '<tr><th>EmpID</th><th>ชื่อ</th><th>เงินเดือน</th><th>เบี้ยเลี้ยง</th><th>OT ฿</th><th>รายรับอื่น</th><th>หักอื่น</th><th>สุทธิ</th></tr>';
+  var confirmed=_payData.filter(function(r){return r.status==='confirmed';});
+  var totalNet=_payData.reduce(function(s,r){
+    var ti=(r.salary||0)+(r.allowances||0)+(r.otPay||0)+(r.otherIncome||0)+(r.birthdayAllow||0)+(r.weddingAllow||0)+(r.specialAcctAllow||0);
+    var sso=Math.min(Math.round(ti*0.05),750);
+    return s+ti-sso-(r.otherDeduct||0)-(r.withholdingTax||0);
+  },0);
 
-  _payData.forEach(function(row, i) {
-    var totalIncome = (Number(row.salary)||0) + (Number(row.allowances)||0) + (Number(row.otPay)||0) + (Number(row.otherIncome)||0);
-    var sso = Math.min(Math.round(totalIncome * 0.05), 750);
-    var net = totalIncome - sso - (Number(row.otherDeduct)||0);
-    html += '<tr>';
-    html += '<td style="font-size:11px;color:var(--gray3)">' + row.empId + '</td>';
-    html += '<td style="font-weight:600;min-width:130px">' + row.name + '</td>';
-    html += '<td><input type="number" data-idx="' + i + '" data-field="salary" value="' + (row.salary||0) + '" oninput="updatePayRow(this)"></td>';
-    html += '<td><input type="number" data-idx="' + i + '" data-field="allowances" value="' + (row.allowances||0) + '" oninput="updatePayRow(this)"></td>';
-    html += '<td><input type="number" data-idx="' + i + '" data-field="otPay" value="' + (row.otPay||0) + '" oninput="updatePayRow(this)"></td>';
-    html += '<td><input type="number" data-idx="' + i + '" data-field="otherIncome" value="' + (row.otherIncome||0) + '" oninput="updatePayRow(this)"></td>';
-    html += '<td><input type="number" data-idx="' + i + '" data-field="otherDeduct" value="' + (row.otherDeduct||0) + '" oninput="updatePayRow(this)"></td>';
-    html += '<td id="net_' + i + '" style="font-weight:700;color:var(--navy)">฿' + fmt(net) + '</td>';
-    html += '</tr>';
+  var html='<div class="card"><div class="card-header"><h2>&#128176; จัดการเงินเดือน</h2></div><div class="card-body">';
+  html+='<div class="pill-tabs">';
+  html+='<button class="pill-tab'+(_paySubTab==='payroll'?' active':'')+'" onclick="_switchPayTab(\'payroll\')">&#128179; Payroll</button>';
+  html+='<button class="pill-tab'+(_paySubTab==='ytd'?' active':'')+'" onclick="_switchPayTab(\'ytd\')">&#128200; YTD สะสม</button>';
+  html+='</div>';
+  html+='<div style="margin-bottom:10px">'+_buildYearMonthSelects(_payMonth)+'</div>';
+  html+='<div style="display:flex;gap:8px;margin-bottom:10px;font-size:12px;flex-wrap:wrap">';
+  html+='<span style="background:var(--blue-light);padding:4px 12px;border-radius:6px;color:var(--navy);font-weight:600">'+_payData.length+' คน</span>';
+  html+='<span style="background:var(--green-light);padding:4px 12px;border-radius:6px;color:var(--green);font-weight:600">Confirmed '+confirmed.length+' คน</span>';
+  html+='<span style="background:var(--gray1);padding:4px 12px;border-radius:6px;color:var(--navy);font-weight:600">สุทธิรวม &#3647;'+fmt(totalNet)+'</span>';
+  html+='</div>';
+  html+='<div style="overflow-x:auto"><table class="pay-mgr-table">';
+  html+='<tr><th>ID</th><th>ชื่อ</th><th>เงินเดือน</th><th>เบี้ยเลี้ยง</th><th>OT</th><th>รายรับอื่น</th>';
+  html+='<th>วันเกิด</th><th>มงคลสมรส</th><th>พิเศษบัญชี</th>';
+  html+='<th>SSO</th><th>ภาษี</th><th>หักอื่น</th><th>สุทธิ</th><th>สถานะ</th><th>สลิป</th></tr>';
+
+  _payData.forEach(function(row,i){
+    var ti=(Number(row.salary)||0)+(Number(row.allowances)||0)+(Number(row.otPay)||0)+(Number(row.otherIncome)||0)
+          +(Number(row.birthdayAllow)||0)+(Number(row.weddingAllow)||0)+(Number(row.specialAcctAllow)||0);
+    var sso=Math.min(Math.round(ti*0.05),750);
+    var net=ti-sso-(Number(row.withholdingTax)||0)-(Number(row.otherDeduct)||0);
+    var badge=row.status==='confirmed'
+      ?'<span class="badge badge-confirmed">&#10003; Confirmed</span>'
+      :'<span class="badge badge-draft">Draft</span>';
+    html+='<tr>';
+    html+='<td style="font-size:11px;color:var(--gray3)">'+esc(row.empId)+'</td>';
+    html+='<td style="font-weight:600;min-width:110px">'+esc(row.name)+'</td>';
+    html+='<td><input type="number" data-idx="'+i+'" data-field="salary"           value="'+(row.salary||0)+'" oninput="updatePayRow(this)"></td>';
+    html+='<td><input type="number" data-idx="'+i+'" data-field="allowances"        value="'+(row.allowances||0)+'" oninput="updatePayRow(this)"></td>';
+    html+='<td><input type="number" data-idx="'+i+'" data-field="otPay"             value="'+(row.otPay||0)+'" oninput="updatePayRow(this)"></td>';
+    html+='<td><input type="number" data-idx="'+i+'" data-field="otherIncome"       value="'+(row.otherIncome||0)+'" oninput="updatePayRow(this)"></td>';
+    html+='<td><input type="number" data-idx="'+i+'" data-field="birthdayAllow"     value="'+(row.birthdayAllow||0)+'" oninput="updatePayRow(this)" style="background:#fffde7"></td>';
+    html+='<td><input type="number" data-idx="'+i+'" data-field="weddingAllow"      value="'+(row.weddingAllow||0)+'" oninput="updatePayRow(this)" style="background:#fffde7"></td>';
+    html+='<td><input type="number" data-idx="'+i+'" data-field="specialAcctAllow"  value="'+(row.specialAcctAllow||0)+'" oninput="updatePayRow(this)" style="background:#fffde7"></td>';
+    html+='<td id="sso_'+i+'" style="color:var(--orange);font-weight:600">&#3647;'+fmt(sso)+'</td>';
+    html+='<td><input type="number" data-idx="'+i+'" data-field="withholdingTax" value="'+(row.withholdingTax||0)+'" oninput="updatePayRow(this)" style="background:#fde8e8"></td>';
+    html+='<td><input type="number" data-idx="'+i+'" data-field="otherDeduct"        value="'+(row.otherDeduct||0)+'" oninput="updatePayRow(this)"></td>';
+    html+='<td id="net_'+i+'" style="font-weight:700;color:var(--navy);white-space:nowrap">&#3647;'+fmt(net)+'</td>';
+    html+='<td style="text-align:center">'+badge+'</td>';
+    html+='<td style="text-align:center"><button class="btn btn-secondary btn-sm" onclick="downloadSlip('+i+')" title="ดาวน์โหลดสลิป">&#128229;</button></td>';
+    html+='</tr>';
   });
-  html += '</table></div>';
-
-  html += '<div class="pay-mgr-footer">';
-  html += '<button class="btn btn-secondary" onclick="savePayroll(\'draft\')">💾 Save Draft</button>';
-  html += '<button class="btn btn-success" onclick="savePayroll(\'confirmed\')" style="margin-left:8px">✅ Confirm เงินเดือน</button>';
-  html += '</div>';
-  html += '<div id="payMgrMsg" class="msg-box"></div>';
-  html += '</div></div>';
-  $('tabPayroll').innerHTML = html;
-
-  function _onPayYearMonthChange() {
-    var y = $('payYear') ? $('payYear').value : '';
-    var m = $('payMonthNum') ? $('payMonthNum').value : '';
-    if (y && m) { _payMonth = y + '-' + m; loadPayrollMgr(); }
-  }
-  $('payYear').addEventListener('change', _onPayYearMonthChange);
-  $('payMonthNum').addEventListener('change', _onPayYearMonthChange);
+  html+='</table></div>';
+  html+='<div style="margin-top:10px;font-size:11px;color:var(--gray3)">&#128308; สีเหลือง = สวัสดิการพิเศษ &nbsp;&#128308; สีแดงอ่อน = ภาษีหัก ณ ที่จ่าย (คำนวณอัตโนมัติ แก้ไขได้)</div>';
+  html+='<div class="pay-mgr-footer">';
+  html+='<button class="btn btn-secondary"  onclick="savePayroll(\'draft\')">&#128190; Save Draft</button>';
+  html+='<button class="btn btn-success"    onclick="savePayroll(\'confirmed\')">&#10003; Confirm</button>';
+  html+='<button class="btn btn-csv"        onclick="exportPayrollCSV()">&#128202; Export CSV</button>';
+  html+='<button class="btn btn-email"      onclick="sendAllSlips()">&#128231; Send All Slips</button>';
+  html+='</div>';
+  html+='<div id="sendProgress" style="display:none;margin-top:8px">';
+  html+='<div style="font-size:12px;color:var(--gray3);margin-bottom:3px" id="sendProgressLabel">กำลังส่ง...</div>';
+  html+='<div class="progress-wrap"><div class="progress-bar" id="sendProgressBar" style="width:0%"></div></div>';
+  html+='</div>';
+  html+='<div id="payMgrMsg" class="msg-box"></div>';
+  html+='</div></div>';
+  $('tabPayroll').innerHTML=html;
+  $('payYear').addEventListener('change',_onPayYearMonthChange);
+  $('payMonthNum').addEventListener('change',_onPayYearMonthChange);
 }
-
-function updatePayRow(input) {
-  var idx = parseInt(input.dataset.idx);
-  var field = input.dataset.field;
-  _payData[idx][field] = Number(input.value) || 0;
-  // Recalculate net
-  var row = _payData[idx];
-  var totalIncome = (row.salary||0) + (row.allowances||0) + (row.otPay||0) + (row.otherIncome||0);
-  var sso = Math.min(Math.round(totalIncome * 0.05), 750);
-  var net = totalIncome - sso - (row.otherDeduct||0);
-  var netEl = $('net_' + idx);
-  if (netEl) netEl.textContent = '฿' + fmt(net);
+function _switchPayTab(tab){
+  _paySubTab=tab;
+  if(tab==='ytd') _renderYTDView(); else loadPayrollMgr();
 }
-
-// ============================================================
-// TAB: ROLE MANAGER (Admin only)
-// ============================================================
-async function loadRoleManager() {
-  $('tabRoles').innerHTML = '<div class="loading">⏳ กำลังโหลด...</div>';
-  var r = await apiGet('getEmployeeRoles', {});
-  if (!r.success) { $('tabRoles').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>' + r.error + '</div>'; return; }
-  _renderRoleManager(r.data);
+function _onPayYearMonthChange(){
+  var y=$('payYear')?$('payYear').value:'';
+  var m=$('payMonthNum')?$('payMonthNum').value:'';
+  if(y&&m){_payMonth=y+'-'+m;loadPayrollMgr();}
 }
-
-function _renderRoleManager(list) {
-  var roleColor = {admin:'var(--purple)', hr:'var(--blue)', manager:'var(--green)', employee:'var(--gray3)'};
-  var roleLabel = {admin:'👑 Admin', hr:'🏢 HR', manager:'🔷 Manager', employee:'พนักงาน'};
-
-  var html = '<div class="card"><div class="card-header">';
-  html += '<h2>🔑 จัดการสิทธิ์ HR</h2>';
-  html += '<p>Admin สามารถให้/ถอนสิทธิ์ HR ได้ · ไม่สามารถสร้าง Admin เพิ่มได้</p>';
-  html += '</div><div class="card-body">';
-
-  // Admin info box
-  html += '<div style="background:var(--purple-light);border-left:4px solid var(--purple);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px">';
-  html += '<strong style="color:var(--purple)">👑 System Admin:</strong> นางสาววรลักษณ์ แสงสุวรรณ (คุณปอ)';
-  html += '<br><span style="color:#666;font-size:12px">woralakpor789@gmail.com — ผู้ดูแลระบบหลัก</span>';
-  html += '</div>';
-
-  // HR list (currently have hr role)
-  var hrList = list.filter(function(e) { return e.role === 'hr'; });
-  if (hrList.length > 0) {
-    html += '<div class="section-title" style="color:var(--blue)">🏢 HR ปัจจุบัน (' + hrList.length + ' คน)</div>';
-    hrList.forEach(function(e) {
-      html += '<div class="emp-row">';
-      html += '<div class="emp-avatar" style="background:var(--blue-light);color:var(--blue)">' + (e.name||'').replace(/^(นาย|นาง|นางสาว)/,'').trim().charAt(0) + '</div>';
-      html += '<div class="emp-info"><div class="emp-name">' + e.name + (e.nickname ? ' (' + e.nickname + ')' : '') + '</div>';
-      html += '<div class="emp-meta">' + e.empId + ' · ' + (e.dept||'') + '</div></div>';
-      html += '<div class="emp-status"><button class="btn btn-danger btn-sm" onclick="changeRole(\'' + e.empId + '\',\'employee\',this)">ถอนสิทธิ์ HR</button></div>';
-      html += '</div>';
-    });
-    html += '<div class="divider"></div>';
-  }
-
-  // Search + grant HR
-  html += '<div class="section-title">➕ ให้สิทธิ์ HR</div>';
-  html += '<div class="filter-bar" style="margin-bottom:10px">';
-  html += '<input type="text" id="roleSearch" placeholder="ค้นหาชื่อพนักงาน..." oninput="filterRoleList()">';
-  html += _buildDeptSelect('roleDeptFilter', 'all');
-  html += '</div>';
-  html += '<div id="roleEmpList">' + _renderRoleEmpList(list) + '</div>';
-  html += '<div id="roleMsg" class="msg-box" style="margin-top:10px"></div>';
-  html += '</div></div>';
-
-  $('tabRoles').innerHTML = html;
-  $('roleDeptFilter').addEventListener('change', filterRoleList);
-}
-
-function _renderRoleEmpList(list) {
-  var search = $('roleSearch') ? $('roleSearch').value.toLowerCase() : '';
-  var dept = $('roleDeptFilter') ? $('roleDeptFilter').value : 'all';
-  var filtered = list.filter(function(e) {
-    if (e.role === 'admin' || e.role === 'hr') return false; // already shown above or skip admin
-    if (e.status === 'ลาออก' || e.status === 'พ้นสภาพ') return false;
-    var nameMatch = !search || e.name.toLowerCase().indexOf(search) >= 0;
-    var deptMatch = dept === 'all' || e.dept === dept;
-    return nameMatch && deptMatch;
-  });
-  if (filtered.length === 0) return '<div class="empty" style="padding:16px"><div class="empty-icon">🔍</div>ไม่พบพนักงาน</div>';
-  return filtered.map(function(e) {
-    return '<div class="emp-row">' +
-      '<div class="emp-avatar">' + (e.name||'').replace(/^(นาย|นาง|นางสาว)/,'').trim().charAt(0) + '</div>' +
-      '<div class="emp-info"><div class="emp-name">' + e.name + (e.nickname ? ' (' + e.nickname + ')' : '') + '</div>' +
-      '<div class="emp-meta">' + e.empId + ' · ' + (e.dept||'ไม่ระบุ') + '</div></div>' +
-      '<div class="emp-status"><button class="btn btn-primary btn-sm" onclick="changeRole(\'' + e.empId + '\',\'hr\',this)">ให้สิทธิ์ HR</button></div>' +
-    '</div>';
-  }).join('');
-}
-
-function filterRoleList() {
-  if ($('roleEmpList')) {
-    var r = apiGet('getEmployeeRoles', {});
-    r.then(function(res) {
-      if (res.success && $('roleEmpList')) $('roleEmpList').innerHTML = _renderRoleEmpList(res.data);
-    });
+function updatePayRow(input){
+  var idx=parseInt(input.dataset.idx), field=input.dataset.field;
+  _payData[idx][field]=Number(input.value)||0;
+  var r=_payData[idx];
+  var ti=(r.salary||0)+(r.allowances||0)+(r.otPay||0)+(r.otherIncome||0)+(r.birthdayAllow||0)+(r.weddingAllow||0)+(r.specialAcctAllow||0);
+  var sso=Math.min(Math.round(ti*0.05),750);
+  // Auto-recalc tax only if the user is not editing the tax field directly
+  if(field!=='withholdingTax') _payData[idx].withholdingTax=_calcMonthlyTax(ti);
+  var net=ti-sso-(_payData[idx].withholdingTax||0)-(r.otherDeduct||0);
+  if($('net_'+idx)) $('net_'+idx).textContent='฿'+fmt(net);
+  if($('sso_'+idx)) $('sso_'+idx).textContent='฿'+fmt(sso);
+  // Refresh tax input if it was auto-recalculated
+  if(field!=='withholdingTax'){
+    var taxInput=document.querySelector('input[data-idx="'+idx+'"][data-field="withholdingTax"]');
+    if(taxInput) taxInput.value=_payData[idx].withholdingTax;
   }
 }
-
-async function changeRole(targetEmpId, newRole, btn) {
-  btn.disabled = true;
-  var msg = $('roleMsg');
-  var r = await apiPost({action:'updateRole', targetEmpId:targetEmpId, newRole:newRole});
-  if (r.success) {
-    msg.className = 'msg-box msg-success';
-    msg.textContent = (newRole === 'hr' ? '✅ ให้สิทธิ์ HR' : '🔄 ถอนสิทธิ์ HR') + ' เรียบร้อยแล้ว';
-    msg.style.display = 'block';
-    setTimeout(function() { msg.style.display = 'none'; loadRoleManager(); }, 1500);
+async function savePayroll(status){
+  var msg=$('payMgrMsg');
+  msg.className='msg-box'; msg.textContent='กำลังบันทึก...'; msg.style.display='block';
+  var rows=_payData.map(function(r){return Object.assign({},r,{month:_payMonth});});
+  var res=await apiPost({action:'savePayroll',rows:rows,status:status});
+  if(res.success){
+    msg.className='msg-box msg-success';
+    msg.textContent=(status==='confirmed'?'&#10003; Confirm':'&#128190; Save')+' เงินเดือน '+_monthLabel(_payMonth)+' เรียบร้อย ('+res.saved+' คน)';
+    await loadPayrollMgr();
   } else {
-    msg.className = 'msg-box msg-error';
-    msg.textContent = '❌ ' + r.error;
-    msg.style.display = 'block';
-    btn.disabled = false;
+    msg.className='msg-box msg-error'; msg.textContent='&#10060; '+esc(res.error);
   }
+  setTimeout(function(){if($('payMgrMsg'))$('payMgrMsg').style.display='none';},4000);
 }
 
-// ============================================================
-// YEAR/MONTH SELECTOR (Payroll)
-// ============================================================
-function _buildYearMonthSelects(payMonth) {
-  var years = {};
-  _months.forEach(function(m) { years[m.split('-')[0]] = true; });
-  var curYear = new Date().getFullYear();
-  years[curYear] = true;
-  years[curYear - 1] = true;
-  var yearList = Object.keys(years).sort().reverse();
-  var curY = payMonth ? payMonth.split('-')[0] : String(curYear);
-  var curM = payMonth ? payMonth.split('-')[1] : String(new Date().getMonth() + 1).padStart(2, '0');
-  var thaiMonths = ['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-  var html = '<div style="display:flex;gap:8px;align-items:center">';
-  html += '<span style="font-size:13px;font-weight:600;color:var(--navy)">เดือน:</span>';
-  html += '<select id="payMonthNum" style="width:90px">';
-  for (var m = 1; m <= 12; m++) {
-    var mv = String(m).padStart(2, '0');
-    html += '<option value="' + mv + '"' + (mv === curM ? ' selected' : '') + '>' + thaiMonths[m] + '</option>';
-  }
-  html += '</select>';
-  html += '<span style="font-size:13px;font-weight:600;color:var(--navy)">ปี:</span>';
-  html += '<select id="payYear" style="width:82px">';
-  yearList.forEach(function(y) {
-    html += '<option value="' + y + '"' + (y === curY ? ' selected' : '') + '>' + (parseInt(y) + 543) + '</option>';
+// ─────────────────────────────────────────────────────────────
+// FEATURE 4: EXPORT CSV
+// ─────────────────────────────────────────────────────────────
+function exportPayrollCSV(){
+  var headers=['EmpID','ชื่อ','แผนก','ตำแหน่ง','เดือน','เงินเดือน','เบี้ยเลี้ยง','OT','รายรับอื่น','วันเกิด','มงคลสมรส','พิเศษบัญชี','รวมรายรับ','SSO','ภาษีหัก','หักอื่น','รวมรายหัก','เงินสุทธิ','สถานะ','หมายเหตุ'];
+  var rows=[headers.join(',')];
+  _payData.forEach(function(r){
+    var ti=(r.salary||0)+(r.allowances||0)+(r.otPay||0)+(r.otherIncome||0)+(r.birthdayAllow||0)+(r.weddingAllow||0)+(r.specialAcctAllow||0);
+    var sso=Math.min(Math.round(ti*0.05),750);
+    var tax=r.withholdingTax||0;
+    var totalDeduct=sso+tax+(r.otherDeduct||0);
+    var net=ti-totalDeduct;
+    var cells=[
+      r.empId, '"'+r.name+'"', '"'+(r.dept||'')+'"', '"'+(r.position||'')+'"', r.month,
+      r.salary||0, r.allowances||0, r.otPay||0, r.otherIncome||0,
+      r.birthdayAllow||0, r.weddingAllow||0, r.specialAcctAllow||0,
+      ti, sso, tax, r.otherDeduct||0, totalDeduct, net,
+      r.status, '"'+(r.note||'')+'"'
+    ];
+    rows.push(cells.join(','));
   });
-  html += '</select></div>';
-  return html;
+  var csv='\uFEFF'+rows.join('\n'); // BOM for Excel Thai
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download='payroll_'+_payMonth+'.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},10000);
 }
 
-// ============================================================
+// ─────────────────────────────────────────────────────────────
+// FEATURE 1: YTD VIEW
+// ─────────────────────────────────────────────────────────────
+async function _renderYTDView(){
+  $('tabPayroll').innerHTML='<div class="loading">&#9203; กำลังโหลด YTD...</div>';
+  var year=_payMonth?_payMonth.split('-')[0]:String(new Date().getFullYear());
+  var r=await apiGet('getYTD',{year:year});
+  if(!r.success){$('tabPayroll').innerHTML='<div class="empty"><div class="empty-icon">&#10060;</div>'+esc(r.error)+'</div>';return;}
+  var data=r.data||[];
+
+  var html='<div class="card"><div class="card-header"><h2>&#128200; YTD สะสม ปี '+(parseInt(year)+543)+'</h2>';
+  html+='<p>เฉพาะเดือนที่ Confirmed เท่านั้น</p></div><div class="card-body">';
+  html+='<div class="pill-tabs">';
+  html+='<button class="pill-tab" onclick="_switchPayTab(\'payroll\')">&#128179; Payroll</button>';
+  html+='<button class="pill-tab active" onclick="_switchPayTab(\'ytd\')">&#128200; YTD สะสม</button>';
+  html+='</div>';
+  html+='<div style="margin-bottom:10px">'+_buildYearMonthSelects(_payMonth)+'</div>';
+
+  if(!data.length){
+    html+='<div class="empty"><div class="empty-icon">&#128202;</div>ยังไม่มีข้อมูล Confirmed ในปีนี้</div>';
+  } else {
+    var sumIncome=0,sumSSO=0,sumTax=0,sumNet=0;
+    data.forEach(function(d){sumIncome+=d.totalIncome;sumSSO+=d.totalSSO;sumTax+=d.totalWithholdingTax;sumNet+=d.totalNet;});
+    html+='<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;font-size:12px">';
+    html+='<span style="background:var(--blue-light);padding:4px 12px;border-radius:6px;color:var(--navy);font-weight:600">รวมรายรับ &#3647;'+fmt(sumIncome)+'</span>';
+    html+='<span style="background:var(--yellow-light);padding:4px 12px;border-radius:6px;color:var(--orange);font-weight:600">SSO สะสม &#3647;'+fmt(sumSSO)+'</span>';
+    html+='<span style="background:var(--red-light);padding:4px 12px;border-radius:6px;color:var(--red);font-weight:600">ภาษีสะสม &#3647;'+fmt(sumTax)+'</span>';
+    html+='<span style="background:var(--green-light);padding:4px 12px;border-radius:6px;color:var(--green);font-weight:600">สุทธิสะสม &#3647;'+fmt(sumNet)+'</span>';
+    html+='</div>';
+    html+='<div style="overflow-x:auto"><table class="ytd-table">';
+    html+='<tr><th>ID</th><th>ชื่อ</th><th>เดือน</th><th>รวมรายรับ</th><th>SSO สะสม</th><th>ภาษีสะสม</th><th>สุทธิสะสม</th></tr>';
+    data.forEach(function(d){
+      html+='<tr>';
+      html+='<td style="font-size:11px;color:var(--gray3)">'+esc(d.empId)+'</td>';
+      html+='<td style="font-weight:600">'+esc(d.name)+'</td>';
+      html+='<td style="text-align:center">'+d.months+' เดือน</td>';
+      html+='<td>&#3647;'+fmt(d.totalIncome)+'</td>';
+      html+='<td style="color:var(--orange)">&#3647;'+fmt(d.totalSSO)+'</td>';
+      html+='<td style="color:var(--red)">&#3647;'+fmt(d.totalWithholdingTax)+'</td>';
+      html+='<td style="font-weight:700;color:var(--navy)">&#3647;'+fmt(d.totalNet)+'</td>';
+      html+='</tr>';
+    });
+    html+='<tr class="ytd-total">';
+    html+='<td colspan="2">รวมทั้งหมด</td>';
+    html+='<td></td>';
+    html+='<td>&#3647;'+fmt(sumIncome)+'</td>';
+    html+='<td>&#3647;'+fmt(sumSSO)+'</td>';
+    html+='<td>&#3647;'+fmt(sumTax)+'</td>';
+    html+='<td>&#3647;'+fmt(sumNet)+'</td>';
+    html+='</tr>';
+    html+='</table></div>';
+    html+='<div style="margin-top:10px;text-align:right"><button class="btn btn-csv btn-sm" onclick="exportYTDCSV('+JSON.stringify(data)+',\''+year+'\')">&#128202; Export YTD CSV</button></div>';
+  }
+  html+='</div></div>';
+  $('tabPayroll').innerHTML=html;
+  $('payYear').addEventListener('change',function(){_payMonth=this.value+'-'+(_payMonth.split('-')[1]||'01');_renderYTDView();});
+  $('payMonthNum').addEventListener('change',_onPayYearMonthChange);
+}
+function exportYTDCSV(data,year){
+  var h=['EmpID','ชื่อ','แผนก','ตำแหน่ง','เดือนที่ Confirmed','รวมรายรับ','SSO สะสม','ภาษีสะสม','รวมรายหัก','สุทธิสะสม'];
+  var rows=[h.join(',')];
+  data.forEach(function(d){
+    rows.push([d.empId,'"'+d.name+'"','"'+(d.dept||'')+'"','"'+(d.position||'')+'"',d.months,
+      d.totalIncome,d.totalSSO,d.totalWithholdingTax,d.totalDeduct,d.totalNet].join(','));
+  });
+  var csv='\uFEFF'+rows.join('\n');
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download='ytd_'+year+'.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},10000);
+}
+
+// ─────────────────────────────────────────────────────────────
+// SLIP DOWNLOAD (Blob URL)
+// ─────────────────────────────────────────────────────────────
+function downloadSlip(idx){
+  var row=_payData[idx]; if(!row) return;
+  var html=_generateSlipHTML(row);
+  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download='slip_'+row.empId+'_'+(_payMonth||row.month)+'.html';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},15000);
+}
+function _generateSlipHTML(row){
+  var ti=(Number(row.salary)||0)+(Number(row.allowances)||0)+(Number(row.otPay)||0)+(Number(row.otherIncome)||0)
+        +(Number(row.birthdayAllow)||0)+(Number(row.weddingAllow)||0)+(Number(row.specialAcctAllow)||0);
+  var sso=Math.min(Math.round(ti*0.05),750);
+  var tax=Number(row.withholdingTax)||0;
+  var totalDeduct=sso+tax+(Number(row.otherDeduct)||0);
+  var net=ti-totalDeduct;
+  var ml=_monthLabel(row.month||_payMonth);
+  function R(label,val,cls){
+    return '<tr'+(cls?' class="'+cls+'"':'')+'>'+
+      '<td style="padding:7px 14px">'+label+'</td>'+
+      '<td style="padding:7px 14px;text-align:right">&#3647;'+fmt(val)+'</td></tr>';
+  }
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>สลิป '+ml+'</title>'+
+  '<style>body{margin:0;font-family:Arial,Tahoma,sans-serif;background:#f0f2f5;color:#333}'+
+  '.w{max-width:480px;margin:20px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.12)}'+
+  '.hd{background:#072b4e;color:#fff;padding:18px 20px}.hd h1{margin:0;font-size:16px}.hd p{margin:4px 0 0;font-size:11px;opacity:.75}'+
+  '.mt{background:#dd4155;color:#fff;padding:8px 20px;font-size:13px;line-height:1.6}'+
+  'table{width:100%;border-collapse:collapse}tr:nth-child(even) td{background:#fafafa}'+
+  '.sec{background:#f5f5f5;padding:6px 14px;font-size:11px;font-weight:700;color:#777;letter-spacing:.5px;text-transform:uppercase;border-top:1px solid #eee}'+
+  '.tot td{background:#072b4e!important;color:#fff;font-weight:700}.net td{background:#dd4155!important;color:#fff;font-weight:700;font-size:15px}'+
+  '.foot{padding:12px 20px;font-size:11px;color:#999;border-top:1px solid #eee}'+
+  '@media print{body{background:#fff}.w{box-shadow:none}}</style></head><body>'+
+  '<div class="w">'+
+  '<div class="hd"><h1>&#128176; สลิปเงินเดือน</h1><p>Good Rich Power Plus</p></div>'+
+  '<div class="mt">'+ml+' &nbsp;|&nbsp; '+row.empId+' &nbsp;|&nbsp; '+row.name+'<br>'+(row.dept||'')+(row.dept&&row.position?' &mdash; ':' ')+(row.position||'')+'</div>'+
+  '<div class="sec">รายรับ</div><table>'+
+  R('เงินเดือนฐาน',row.salary)+
+  R('เบี้ยเลี้ยงรวม',row.allowances)+
+  ((row.otPay>0)?R('ค่า OT',row.otPay):'')+
+  ((row.otherIncome>0)?R('รายรับอื่นๆ',row.otherIncome):'')+
+  ((row.birthdayAllow>0)?R('&#127874; สวัสดิการวันเกิด',row.birthdayAllow):'')+
+  ((row.weddingAllow>0)?R('&#128141; สวัสดิการมงคลสมรส',row.weddingAllow):'')+
+  ((row.specialAcctAllow>0)?R('&#127991; เงินพิเศษบัญชี',row.specialAcctAllow):'')+
+  R('รวมรายรับ',ti,'tot')+'</table>'+
+  '<div class="sec">รายหัก</div><table>'+
+  R('ประกันสังคม (SSO 5%, สูงสุด &#3647;750)',sso)+
+  ((tax>0)?R('ภาษีหัก ณ ที่จ่าย',tax):'')+
+  (((row.otherDeduct||0)>0)?R('หักอื่นๆ',row.otherDeduct):'')+
+  R('รวมรายหัก',totalDeduct,'tot')+'</table>'+
+  '<table>'+R('&#128184; เงินสุทธิที่ได้รับ',net,'net')+'</table>'+
+  '<div class="foot" style="text-align:right"><button onclick="window.print()" style="background:#072b4e;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px">&#128438; พิมพ์</button></div>'+
+  '</div></body></html>';
+}
+
+// ─────────────────────────────────────────────────────────────
+// SEND ALL SLIPS (email)
+// ─────────────────────────────────────────────────────────────
+async function sendAllSlips(){
+  var toSend=_payData.filter(function(r){return r.status==='confirmed';});
+  if(!toSend.length){alert('ไม่มีพนักงานที่ Confirmed เดือนนี้ กรุณา Confirm ก่อน');return;}
+  var withEmail=toSend.filter(function(r){
+    var e=_employees.find(function(x){return x.empId===r.empId;});
+    return e&&e.email;
+  });
+  if(!window.confirm('ส่งสลิปเงินเดือน '+_monthLabel(_payMonth)+'\nส่ง: '+withEmail.length+' คน · ข้าม (ไม่มีอีเมล): '+(toSend.length-withEmail.length)+' คน\n\nยืนยัน?')) return;
+
+  var pw=$('sendProgress'),pb=$('sendProgressBar'),pl=$('sendProgressLabel');
+  pw.style.display='block'; var msg=$('payMgrMsg'); msg.style.display='none';
+  var sent=0,skipped=0,failed=0,total=toSend.length;
+
+  for(var i=0;i<toSend.length;i++){
+    var row=toSend[i];
+    pl.textContent='กำลังส่ง '+esc(row.name)+' ('+(i+1)+'/'+total+')...';
+    pb.style.width=Math.round(((i+1)/total)*100)+'%';
+    var res=await apiPost({action:'sendPayrollEmail',targetEmpId:row.empId,month:_payMonth});
+    if(res.success) sent++;
+    else if(res.skipped) skipped++;
+    else failed++;
+  }
+  pw.style.display='none';
+  msg.className='msg-box '+(failed>0?'msg-error':'msg-success');
+  msg.style.display='block';
+  msg.textContent='&#128231; ส่งสำเร็จ '+sent+' คน · ข้าม '+skipped+' คน'+(failed>0?' · ผิดพลาด '+failed+' คน':'');
+  setTimeout(function(){if($('payMgrMsg'))$('payMgrMsg').style.display='none';},6000);
+}
+
+// ─────────────────────────────────────────────────────────────
+// YEAR/MONTH SELECTS
+// ─────────────────────────────────────────────────────────────
+function _buildYearMonthSelects(payMonth){
+  var years={};_months.forEach(function(m){years[m.split('-')[0]]=1;});
+  var cy=new Date().getFullYear(); years[cy]=1; years[cy-1]=1;
+  var yl=Object.keys(years).sort().reverse();
+  var curY=payMonth?payMonth.split('-')[0]:String(cy);
+  var curM=payMonth?payMonth.split('-')[1]:String(new Date().getMonth()+1).padStart(2,'0');
+  var TM=['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  var h='<div style="display:flex;gap:8px;align-items:center">';
+  h+='<span style="font-size:13px;font-weight:600;color:var(--navy)">เดือน:</span>';
+  h+='<select id="payMonthNum" style="width:90px">';
+  for(var m=1;m<=12;m++){var mv=String(m).padStart(2,'0');h+='<option value="'+mv+'"'+(mv===curM?' selected':'')+'>'+TM[m]+'</option>';}
+  h+='</select><span style="font-size:13px;font-weight:600;color:var(--navy)">ปี:</span>';
+  h+='<select id="payYear" style="width:82px">';
+  yl.forEach(function(y){h+='<option value="'+y+'"'+(y===curY?' selected':'')+'>'+(parseInt(y)+543)+'</option>';});
+  return h+'</select></div>';
+}
+
+// ─────────────────────────────────────────────────────────────
 // EDIT EMPLOYEE
-// ============================================================
-var _editEmpData = null;
-
-async function openEditEmp(empId) {
+// ─────────────────────────────────────────────────────────────
+var _editEmpData=null;
+async function openEditEmp(empId){
   $('editEmpModal').classList.add('open');
-  $('editEmpForm').innerHTML = '<div class="loading">&#9203; กำลังโหลด...</div>';
-  $('editEmpMsg').style.display = 'none';
-  var r = await apiGet('getEmployeeDetail', {targetEmpId: empId});
-  if (!r.success) {
-    $('editEmpForm').innerHTML = '<div class="empty">&#10060; ' + esc(r.error) + '</div>';
-    return;
-  }
-  _editEmpData = r.data;
-  _renderEditEmpForm(r.data);
+  $('editEmpForm').innerHTML='<div class="loading">&#9203;</div>';
+  $('editEmpMsg').style.display='none';
+  var r=await apiGet('getEmployeeDetail',{targetEmpId:empId});
+  if(!r.success){$('editEmpForm').innerHTML='<div class="empty">&#10060; '+esc(r.error)+'</div>';return;}
+  _editEmpData=r.data; _renderEditEmpForm(r.data);
 }
-
-function closeEditEmp() {
-  $('editEmpModal').classList.remove('open');
-  _editEmpData = null;
+function closeEditEmp(){$('editEmpModal').classList.remove('open');_editEmpData=null;}
+function _renderEditEmpForm(d){
+  var bankOpts=['กสิกรไทย','กรุงเทพ','ไทยพาณิชย์','กรุงไทย','ทหารไทยธนชาต','กรุงศรี','ออมสิน','ธ.ก.ส.','อื่นๆ'];
+  var statOpts=['พนักงานประจำ','พนักงานทดลองงาน','ลาออก','พ้นสภาพ','เกษียณอายุ'];
+  var typeOpts=['พนักงานประจำ','สัญญาจ้าง','ชั่วคราว','ไม่ระบุ'];
+  function sel(opts,val){return opts.map(function(o){return'<option value="'+esc(o)+'"'+(o===val?' selected':'')+'>'+esc(o)+'</option>';}).join('');}
+  var sd=String(d.startDate||'').substring(0,10); if(sd&&sd.indexOf('-')<0) sd='';
+  var h='<div class="form-group">'+
+    '<div class="form-row"><label>EmpID</label><input type="text" value="'+esc(d.empId)+'" disabled style="background:#f5f5f5;color:#999"></div>'+
+    '<div class="form-row"><label>Role</label><input type="text" value="'+esc(d.role)+'" disabled style="background:#f5f5f5;color:#999"></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>ชื่อ-นามสกุล *</label><input type="text" id="ef_name" value="'+esc(d.name)+'"></div>'+
+    '<div class="form-row"><label>ชื่อเล่น</label><input type="text" id="ef_nickname" value="'+esc(d.nickname||'')+'"></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>แผนก</label><input type="text" id="ef_dept" value="'+esc(d.dept||'')+'" list="deptList"></div>'+
+    '<div class="form-row"><label>ตำแหน่ง</label><input type="text" id="ef_position" value="'+esc(d.position||'')+'"></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>สถานะ</label><select id="ef_status"><option></option>'+sel(statOpts,d.status)+'</select></div>'+
+    '<div class="form-row"><label>ประเภทการจ้าง</label><select id="ef_empType"><option></option>'+sel(typeOpts,d.empType)+'</select></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>เบอร์โทร</label><input type="text" id="ef_phone" value="'+esc(d.phone||'')+'"></div>'+
+    '<div class="form-row"><label>วันเริ่มงาน</label><input type="date" id="ef_startDate" value="'+esc(sd)+'"></div></div>'+
+    '<div class="divider"></div><div class="section-title">&#128176; เงินเดือนและเบี้ยเลี้ยง</div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>เงินเดือน (฿)</label><input type="number" id="ef_salary" value="'+(Number(d.salary)||0)+'"></div>'+
+    '<div class="form-row"><label>ค่าโทรศัพท์ (฿)</label><input type="number" id="ef_phoneAllow" value="'+(Number(d.phoneAllow)||0)+'"></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>ค่าทักษะ (฿)</label><input type="number" id="ef_skillAllow" value="'+(Number(d.skillAllow)||0)+'"></div>'+
+    '<div class="form-row"><label>ค่าวิชาชีพ (฿)</label><input type="number" id="ef_proAllow" value="'+(Number(d.proAllow)||0)+'"></div></div>'+
+    '<div class="form-row"><label>ค่าเดินทาง (฿)</label><input type="number" id="ef_travelAllow" value="'+(Number(d.travelAllow)||0)+'"></div>'+
+    '<div class="divider"></div><div class="section-title">&#127974; บัญชีธนาคาร</div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>ธนาคาร</label><select id="ef_bank"><option></option>'+sel(bankOpts,d.bank)+'</select></div>'+
+    '<div class="form-row"><label>เลขบัญชี</label><input type="text" id="ef_bankAcct" value="'+esc(d.bankAcct||'')+'"></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>ชื่อบัญชี</label><input type="text" id="ef_bankName" value="'+esc(d.bankName||'')+'"></div>'+
+    '<div class="form-row"><label>อีเมล</label><input type="email" id="ef_email" value="'+esc(d.email||'')+'"></div></div>'+
+    '<datalist id="deptList">'+_depts().map(function(x){return'<option value="'+esc(x)+'">';}).join('')+'</datalist>';
+  $('editEmpForm').innerHTML=h;
 }
-
-function _renderEditEmpForm(d) {
-  var bankOptions = ['กสิกรไทย','กรุงเทพ','ไทยพาณิชย์','กรุงไทย','ทหารไทยธนชาต','กรุงศรี','ออมสิน','ธ.ก.ส.','อื่นๆ'];
-  var statusOptions = ['พนักงานประจำ','พนักงานทดลองงาน','ลาออก','พ้นสภาพ','เกษียณอายุ'];
-  var empTypeOptions = ['พนักงานประจำ','สัญญาจ้าง','ชั่วคราว','ไม่ระบุ'];
-  function selOpts(opts, val) {
-    return opts.map(function(o) {
-      return '<option value="' + esc(o) + '"' + (o === val ? ' selected' : '') + '>' + esc(o) + '</option>';
-    }).join('');
-  }
-  var startDateVal = String(d.startDate || '').substring(0, 10);
-  if (startDateVal && startDateVal.indexOf('-') < 0) startDateVal = '';
-
-  var html = '<div class="form-group">'
-    + '<div class="form-row"><label>EmpID</label><input type="text" value="' + esc(d.empId) + '" disabled style="background:#f5f5f5;color:#999"></div>'
-    + '<div class="form-row"><label>Role</label><input type="text" value="' + esc(d.role) + '" disabled style="background:#f5f5f5;color:#999"></div>'
-    + '</div>'
-    + '<div class="form-group">'
-    + '<div class="form-row"><label>ชื่อ-นามสกุล *</label><input type="text" id="ef_name" value="' + esc(d.name) + '"></div>'
-    + '<div class="form-row"><label>ชื่อเล่น</label><input type="text" id="ef_nickname" value="' + esc(d.nickname) + '"></div>'
-    + '</div>'
-    + '<div class="form-group">'
-    + '<div class="form-row"><label>แผนก</label><input type="text" id="ef_dept" value="' + esc(d.dept) + '" list="deptList"></div>'
-    + '<div class="form-row"><label>ตำแหน่ง</label><input type="text" id="ef_position" value="' + esc(d.position) + '"></div>'
-    + '</div>'
-    + '<div class="form-group">'
-    + '<div class="form-row"><label>สถานะ</label><select id="ef_status"><option value=""></option>' + selOpts(statusOptions, d.status) + '</select></div>'
-    + '<div class="form-row"><label>ประเภทการจ้าง</label><select id="ef_empType"><option value=""></option>' + selOpts(empTypeOptions, d.empType) + '</select></div>'
-    + '</div>'
-    + '<div class="form-group">'
-    + '<div class="form-row"><label>เบอร์โทร</label><input type="text" id="ef_phone" value="' + esc(d.phone) + '"></div>'
-    + '<div class="form-row"><label>วันเริ่มงาน</label><input type="date" id="ef_startDate" value="' + esc(startDateVal) + '"></div>'
-    + '</div>'
-    + '<div class="divider"></div>'
-    + '<div class="section-title">&#128176; เงินเดือนและเบี้ยเลี้ยง</div>'
-    + '<div class="form-group">'
-    + '<div class="form-row"><label>เงินเดือน (฿)</label><input type="number" id="ef_salary" value="' + (Number(d.salary)||0) + '"></div>'
-    + '<div class="form-row"><label>ค่าโทรศัพท์ (฿)</label><input type="number" id="ef_phoneAllow" value="' + (Number(d.phoneAllow)||0) + '"></div>'
-    + '</div>'
-    + '<div class="form-group">'
-    + '<div class="form-row"><label>ค่าทักษะ (฿)</label><input type="number" id="ef_skillAllow" value="' + (Number(d.skillAllow)||0) + '"></div>'
-    + '<div class="form-row"><label>ค่าวิชาชีพ (฿)</label><input type="number" id="ef_proAllow" value="' + (Number(d.proAllow)||0) + '"></div>'
-    + '</div>'
-    + '<div class="form-row"><label>ค่าเดินทาง (฿)</label><input type="number" id="ef_travelAllow" value="' + (Number(d.travelAllow)||0) + '"></div>'
-    + '<div class="divider"></div>'
-    + '<div class="section-title">&#127974; บัญชีธนาคาร</div>'
-    + '<div class="form-group">'
-    + '<div class="form-row"><label>ธนาคาร</label><select id="ef_bank"><option value=""></option>' + selOpts(bankOptions, d.bank) + '</select></div>'
-    + '<div class="form-row"><label>เลขบัญชี</label><input type="text" id="ef_bankAcct" value="' + esc(d.bankAcct) + '"></div>'
-    + '</div>'
-    + '<div class="form-group">'
-    + '<div class="form-row"><label>ชื่อบัญชี</label><input type="text" id="ef_bankName" value="' + esc(d.bankName) + '"></div>'
-    + '<div class="form-row"><label>อีเมล</label><input type="email" id="ef_email" value="' + esc(d.email) + '"></div>'
-    + '</div>'
-    + '<datalist id="deptList">'
-    + _depts().map(function(dept) { return '<option value="' + esc(dept) + '">'; }).join('')
-    + '</datalist>';
-  $('editEmpForm').innerHTML = html;
-}
-
-async function saveEditEmp() {
-  if (!_editEmpData) return;
-  var msg = $('editEmpMsg');
-  var name = $('ef_name') ? $('ef_name').value.trim() : '';
-  if (!name) {
-    msg.className = 'msg-box msg-error'; msg.textContent = '❌ กรุณากรอกชื่อ-นามสกุล';
-    msg.style.display = 'block'; return;
-  }
-  msg.className = 'msg-box'; msg.textContent = 'กำลังบันทึก...'; msg.style.display = 'block';
-  var data = {
-    name: name,
-    nickname: $('ef_nickname') ? $('ef_nickname').value.trim() : '',
-    dept: $('ef_dept') ? $('ef_dept').value.trim() : '',
-    position: $('ef_position') ? $('ef_position').value.trim() : '',
-    status: $('ef_status') ? $('ef_status').value : '',
-    empType: $('ef_empType') ? $('ef_empType').value : '',
-    phone: $('ef_phone') ? $('ef_phone').value.trim() : '',
-    startDate: $('ef_startDate') ? $('ef_startDate').value : '',
-    salary: $('ef_salary') ? Number($('ef_salary').value) || 0 : 0,
-    phoneAllow: $('ef_phoneAllow') ? Number($('ef_phoneAllow').value) || 0 : 0,
-    skillAllow: $('ef_skillAllow') ? Number($('ef_skillAllow').value) || 0 : 0,
-    proAllow: $('ef_proAllow') ? Number($('ef_proAllow').value) || 0 : 0,
-    travelAllow: $('ef_travelAllow') ? Number($('ef_travelAllow').value) || 0 : 0,
-    bank: $('ef_bank') ? $('ef_bank').value : '',
-    bankAcct: $('ef_bankAcct') ? $('ef_bankAcct').value.trim() : '',
-    bankName: $('ef_bankName') ? $('ef_bankName').value.trim() : '',
-    email: $('ef_email') ? $('ef_email').value.trim() : ''
+async function saveEditEmp(){
+  if(!_editEmpData) return;
+  var msg=$('editEmpMsg');
+  var name=$('ef_name')?$('ef_name').value.trim():'';
+  if(!name){msg.className='msg-box msg-error';msg.textContent='&#10060; กรุณากรอกชื่อ-นามสกุล';msg.style.display='block';return;}
+  msg.className='msg-box';msg.textContent='กำลังบันทึก...';msg.style.display='block';
+  var data={
+    name:name,
+    nickname:    $('ef_nickname')   ?$('ef_nickname').value.trim():'',
+    dept:        $('ef_dept')       ?$('ef_dept').value.trim():'',
+    position:    $('ef_position')   ?$('ef_position').value.trim():'',
+    status:      $('ef_status')     ?$('ef_status').value:'',
+    empType:     $('ef_empType')    ?$('ef_empType').value:'',
+    phone:       $('ef_phone')      ?$('ef_phone').value.trim():'',
+    startDate:   $('ef_startDate')  ?$('ef_startDate').value:'',
+    salary:      $('ef_salary')     ?Number($('ef_salary').value)||0:0,
+    phoneAllow:  $('ef_phoneAllow') ?Number($('ef_phoneAllow').value)||0:0,
+    skillAllow:  $('ef_skillAllow') ?Number($('ef_skillAllow').value)||0:0,
+    proAllow:    $('ef_proAllow')   ?Number($('ef_proAllow').value)||0:0,
+    travelAllow: $('ef_travelAllow')?Number($('ef_travelAllow').value)||0:0,
+    bank:        $('ef_bank')       ?$('ef_bank').value:'',
+    bankAcct:    $('ef_bankAcct')   ?$('ef_bankAcct').value.trim():'',
+    bankName:    $('ef_bankName')   ?$('ef_bankName').value.trim():'',
+    email:       $('ef_email')      ?$('ef_email').value.trim():''
   };
-  var r = await apiPost({action: 'updateEmployee', targetEmpId: _editEmpData.empId, data: data});
-  if (r.success) {
-    msg.className = 'msg-box msg-success'; msg.textContent = '✅ บันทึกข้อมูลเรียบร้อย';
+  var r=await apiPost({action:'updateEmployee',targetEmpId:_editEmpData.empId,data:data});
+  if(r.success){
+    msg.className='msg-box msg-success';msg.textContent='&#10003; บันทึกข้อมูลเรียบร้อย';
     await _loadEmployees();
-    setTimeout(function() { closeEditEmp(); loadEmployees(); }, 1200);
+    setTimeout(function(){closeEditEmp();loadEmployees();},1200);
   } else {
-    msg.className = 'msg-box msg-error'; msg.textContent = '❌ ' + r.error;
+    msg.className='msg-box msg-error';msg.textContent='&#10060; '+esc(r.error);
   }
-}
-
-async function savePayroll(status) {
-  var msg = $('payMgrMsg');
-  msg.className = 'msg-box'; msg.textContent = 'กำลังบันทึก...'; msg.style.display = 'block';
-  var rows = _payData.map(function(r) { return Object.assign({}, r, {month: _payMonth}); });
-  var res = await apiPost({action:'savePayroll', rows:rows, status:status});
-  if (res.success) {
-    msg.className = 'msg-box msg-success';
-    msg.textContent = (status === 'confirmed' ? '✅ Confirm' : '💾 Save') + ' เงินเดือน ' + _monthLabel(_payMonth) + ' เรียบร้อย (' + res.saved + ' คน)';
-  } else {
-    msg.className = 'msg-box msg-error';
-    msg.textContent = '❌ ' + res.error;
-  }
-  setTimeout(function() { msg.style.display = 'none'; }, 4000);
 }
 </script>
 </body>
