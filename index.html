@@ -162,7 +162,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
     <button data-tab="tabDashboard" class="active"><span class="nav-icon">&#128202;</span>Dashboard</button>
     <button data-tab="tabEmployees"><span class="nav-icon">&#128101;</span>พนักงาน</button>
     <button data-tab="tabPayroll"><span class="nav-icon">&#128176;</span>เงินเดือน</button>
-    <button data-tab="tabLeaveQuota"><span class="nav-icon">&#128203;</span>สิทธิ์ลา</button>
+    <button data-tab="tabLeaveQuota"><span class="nav-icon">&#128203;</span>จัดการลา</button>
   </div>
 </div>
 
@@ -1043,7 +1043,7 @@ function _renderLeaveQuota() {
   var yearOpts='';
   for(var y=2024;y<=2027;y++) yearOpts+='<option value="'+y+'"'+(String(y)===_leaveQuotaYear?' selected':'')+'>'+y+'</option>';
 
-  var html='<div class="card"><div class="card-header"><h2>\ud83d\udccb สิทธิ์วันลาประจำปี</h2><p>จัดการสิทธิ์วันลาพนักงาน</p></div><div class="card-body">';
+  var html='<div class="card"><div class="card-header"><h2>\ud83d\udccb การจัดการสิทธิ์การลา</h2><p>จัดการสิทธิ์วันลาพนักงาน</p></div><div class="card-body">';
   html+='<div class="filter-bar" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">';
   html+='<select onchange="_leaveQuotaYear=this.value;loadLeaveQuota()">'+yearOpts+'</select>';
   html+=_buildDeptSelect('lqDeptSel',_lqDeptFilter);
@@ -1084,9 +1084,17 @@ function openEditQuota(empId, idx) {
   _editQuotaTarget={empId:empId,idx:idx};
   var row=_leaveQuotaData[idx];
   function qRow(label,key,usedVal,quotaVal){
-    return '<div style="margin-bottom:10px">'
-      +'<label style="font-size:12px;font-weight:600;display:block;margin-bottom:3px">'+label+' <span style="font-weight:400;color:var(--gray3)">(ใช้แล้ว: '+usedVal+')</span></label>'
-      +'<input type="number" min="0" max="365" id="lq_'+key+'" value="'+quotaVal+'" style="max-width:120px">'
+    var rem=Math.max(0,(Number(quotaVal)||0)-(Number(usedVal)||0));
+    var remColor=rem>0?'var(--green)':'var(--red)';
+    return '<div style="margin-bottom:14px;padding:10px;background:var(--gray1);border-radius:8px;border:1px solid var(--gray2)">'
+      +'<div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--navy)">'+label+'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+      +'<div><div style="font-size:10px;color:var(--gray3);margin-bottom:3px">สิทธิ์การลาทั้งหมด</div>'
+      +'<input type="number" min="0" max="365" id="lq_q_'+key+'" value="'+quotaVal+'" oninput="updateLqRemaining(\''+key+'\')" style="text-align:center"></div>'
+      +'<div><div style="font-size:10px;color:var(--gray3);margin-bottom:3px">วันลาที่ใช้ไปแล้ว</div>'
+      +'<input type="number" min="0" max="365" id="lq_u_'+key+'" value="'+usedVal+'" oninput="updateLqRemaining(\''+key+'\')" style="text-align:center"></div>'
+      +'</div>'
+      +'<div id="lq_rem_'+key+'" style="font-size:11px;font-weight:600;margin-top:6px;color:'+remColor+'">เหลือ: '+rem+' วัน/ครั้ง</div>'
       +'</div>';
   }
   var form='<div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--navy)">'+esc(row.name)+' — ปี '+_leaveQuotaYear+'</div>';
@@ -1106,23 +1114,42 @@ function openEditQuota(empId, idx) {
   $('editQuotaModal').classList.add('open');
 }
 function closeEditQuota(){$('editQuotaModal').classList.remove('open');}
+function updateLqRemaining(key){
+  var q=Number($('lq_q_'+key).value)||0;
+  var u=Number($('lq_u_'+key).value)||0;
+  var rem=Math.max(0,q-u);
+  var el=$('lq_rem_'+key);
+  if(el){el.textContent='เหลือ: '+rem+' วัน/ครั้ง';el.style.color=rem>0?'var(--green)':'var(--red)';}
+}
 
 async function saveEditQuota() {
   var t=_editQuotaTarget; if(!t) return;
-  var get=function(id){var el=$('lq_'+id);return el?el.value:undefined;};
+  var q=function(k){var el=$('lq_q_'+k);return el?el.value:undefined;};
+  var u=function(k){var el=$('lq_u_'+k);return el?el.value:undefined;};
   var body={action:'setLeaveQuota',targetEmpId:t.empId,year:_leaveQuotaYear,
-    sickQuota:get('sick'),personalQuota:get('personal'),specialQuota:get('special'),
-    vacationQuota:get('vacation'),matPaidQuota:get('matPaid'),matUnpaidQuota:get('matUnpaid'),
-    prenatalQuota:get('prenatal'),militaryQuota:get('military'),note:$('lq_note').value};
+    sickQuota:q('sick'),sickUsed:u('sick'),
+    personalQuota:q('personal'),personalUsed:u('personal'),
+    specialQuota:q('special'),specialUsed:u('special'),
+    vacationQuota:q('vacation'),vacationUsed:u('vacation'),
+    matPaidQuota:q('matPaid'),matPaidUsed:u('matPaid'),
+    matUnpaidQuota:q('matUnpaid'),matUnpaidUsed:u('matUnpaid'),
+    prenatalQuota:q('prenatal'),prenatalUsed:u('prenatal'),
+    militaryQuota:q('military'),militaryUsed:u('military'),
+    note:$('lq_note').value};
   var msg=$('editQuotaMsg');
   msg.className='msg-box';msg.textContent='กำลังบันทึก...';
   var r=await apiPost(body);
   if(r.success){
     var row=_leaveQuotaData[t.idx];
-    function upd(grp,key){if(body[key]!==undefined){row[grp].quota=Number(body[key])||0;row[grp].remaining=Math.max(0,row[grp].quota-row[grp].used);}}
-    upd('sick','sickQuota'); upd('personal','personalQuota'); upd('specialPersonal','specialQuota');
-    upd('vacation','vacationQuota'); upd('matPaid','matPaidQuota'); upd('matUnpaid','matUnpaidQuota');
-    upd('prenatal','prenatalQuota'); upd('military','militaryQuota');
+    function upd(grp,qKey,uKey){
+      if(body[qKey]!==undefined) row[grp].quota=Number(body[qKey])||0;
+      if(body[uKey]!==undefined) row[grp].used=Number(body[uKey])||0;
+      row[grp].remaining=Math.max(0,row[grp].quota-row[grp].used);
+    }
+    upd('sick','sickQuota','sickUsed'); upd('personal','personalQuota','personalUsed');
+    upd('specialPersonal','specialQuota','specialUsed'); upd('vacation','vacationQuota','vacationUsed');
+    upd('matPaid','matPaidQuota','matPaidUsed'); upd('matUnpaid','matUnpaidQuota','matUnpaidUsed');
+    upd('prenatal','prenatalQuota','prenatalUsed'); upd('military','militaryQuota','militaryUsed');
     row.note=$('lq_note').value;
     closeEditQuota();
     _renderLeaveQuota();
