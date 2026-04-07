@@ -156,11 +156,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
     <div id="tabDashboard" class="tab-content"><div class="loading">&#9203;</div></div>
     <div id="tabEmployees" class="tab-content" style="display:none"><div class="loading">&#9203;</div></div>
     <div id="tabPayroll"   class="tab-content" style="display:none"><div class="loading">&#9203;</div></div>
+    <div id="tabLeaveQuota" class="tab-content" style="display:none"><div class="loading">&#9203;</div></div>
   </div>
   <div class="bottom-nav" id="bottomNav">
     <button data-tab="tabDashboard" class="active"><span class="nav-icon">&#128202;</span>Dashboard</button>
     <button data-tab="tabEmployees"><span class="nav-icon">&#128101;</span>พนักงาน</button>
     <button data-tab="tabPayroll"><span class="nav-icon">&#128176;</span>เงินเดือน</button>
+    <button data-tab="tabLeaveQuota"><span class="nav-icon">&#128203;</span>สิทธิ์ลา</button>
   </div>
 </div>
 
@@ -176,6 +178,22 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
   </div>
 </div>
 <div id="printSlipArea" style="display:none"></div>
+
+<!-- Edit Leave Quota Modal -->
+<div class="modal-overlay" id="editQuotaModal">
+  <div class="modal-sheet">
+    <div class="modal-title">
+      <span>&#9999; แก้ไขสิทธิ์วันลา</span>
+      <button onclick="closeEditQuota()" style="background:none;font-size:22px;padding:0;color:var(--gray3)">&#215;</button>
+    </div>
+    <div id="editQuotaForm"></div>
+    <div id="editQuotaMsg" class="msg-box"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeEditQuota()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveEditQuota()">&#128190; บันทึก</button>
+    </div>
+  </div>
+</div>
 
 <!-- Edit Employee Modal -->
 <div class="modal-overlay" id="editEmpModal">
@@ -211,6 +229,10 @@ var _payMonth  = '';
 var _payData   = [];
 var _paySubTab = 'payroll'; // 'payroll' | 'ytd'
 var _currentSlipIdx = null;
+var _leaveQuotaData = [];
+var _leaveQuotaYear = String(new Date().getFullYear());
+var _lqDeptFilter = 'all';
+var _editQuotaTarget = null; // {empId, idx}
 
 // ─────────────────────────────────────────────────────────────
 // UTILS
@@ -291,9 +313,10 @@ $('bottomNav').addEventListener('click', function(e) {
   btn.classList.add('active');
   document.querySelectorAll('.tab-content').forEach(function(t){t.style.display='none';});
   $(tab).style.display='';
-  if(tab==='tabDashboard') loadDashboard();
-  if(tab==='tabEmployees') loadEmployees();
-  if(tab==='tabPayroll')   loadPayrollMgr();
+  if(tab==='tabDashboard')  loadDashboard();
+  if(tab==='tabEmployees')  loadEmployees();
+  if(tab==='tabPayroll')    loadPayrollMgr();
+  if(tab==='tabLeaveQuota') loadLeaveQuota();
 });
 async function _loadMonths() {
   var r=await apiGet('getMonths',{});
@@ -990,7 +1013,132 @@ async function saveEditEmp(){
     await _loadEmployees();
     setTimeout(function(){closeEditEmp();loadEmployees();},1200);
   } else {
-    msg.className='msg-box msg-error';msg.textContent='&#10060; '+esc(r.error);
+    msg.className='msg-box msg-error';msg.textContent='\u274c '+esc(r.error);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// LEAVE QUOTA — สิทธิ์วันลา
+// ─────────────────────────────────────────────────────────────
+async function loadLeaveQuota() {
+  $('tabLeaveQuota').innerHTML='<div class="loading">\u23f3 กำลังโหลดสิทธิ์วันลา...</div>';
+  var r=await apiGet('getAllLeaveQuota',{year:_leaveQuotaYear,dept:_lqDeptFilter});
+  if(!r.success){$('tabLeaveQuota').innerHTML='<div class="empty"><div class="empty-icon">\u274c</div>'+esc(r.error)+'</div>';return;}
+  _leaveQuotaData=r.data||[];
+  _renderLeaveQuota();
+}
+
+function _lqBar(used,quota) {
+  if(!quota) return '<span style="font-size:11px;color:var(--gray3)">N/A</span>';
+  var pct=Math.min(100,Math.round((used/quota)*100));
+  var rem=Math.max(0,quota-used);
+  var clr=rem<=0?'var(--red)':pct>=70?'var(--yellow)':'var(--green)';
+  var txt=rem<=0?'<span style="color:var(--red);font-weight:700">หมด</span>':'<span style="color:var(--green)">เหลือ '+rem+'</span>';
+  return '<div style="font-size:11px">'+used+'/'+quota+' '+txt+'</div>'
+    +'<div style="height:4px;background:var(--gray2);border-radius:2px;margin-top:2px">'
+    +'<div style="height:100%;width:'+pct+'%;background:'+clr+';border-radius:2px"></div></div>';
+}
+
+function _renderLeaveQuota() {
+  var yearOpts='';
+  for(var y=2024;y<=2027;y++) yearOpts+='<option value="'+y+'"'+(String(y)===_leaveQuotaYear?' selected':'')+'>'+y+'</option>';
+
+  var html='<div class="card"><div class="card-header"><h2>\ud83d\udccb สิทธิ์วันลาประจำปี</h2><p>จัดการสิทธิ์วันลาพนักงาน</p></div><div class="card-body">';
+  html+='<div class="filter-bar" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">';
+  html+='<select onchange="_leaveQuotaYear=this.value;loadLeaveQuota()">'+yearOpts+'</select>';
+  html+=_buildDeptSelect('lqDeptSel',_lqDeptFilter);
+  html+='<button class="btn btn-secondary btn-sm" onclick="initNewYear()" style="white-space:nowrap">\ud83d\udcc4 Initialize ปี '+_leaveQuotaYear+'</button>';
+  html+='</div></div></div>';
+
+  if(_leaveQuotaData.length===0){
+    html+='<div class="empty"><div class="empty-icon">\ud83d\udccb</div>ยังไม่มีข้อมูลสิทธิ์วันลา<br><small>กด "Initialize" เพื่อสร้างข้อมูลเริ่มต้น</small></div>';
+    $('tabLeaveQuota').innerHTML=html;
+    $('lqDeptSel').addEventListener('change',function(){_lqDeptFilter=this.value;loadLeaveQuota();});
+    return;
+  }
+
+  html+='<div class="card"><div class="card-body"><div style="overflow-x:auto">';
+  html+='<table class="pay-mgr-table" style="min-width:800px"><thead><tr>';
+  html+='<th style="text-align:left">รหัส</th><th style="text-align:left">ชื่อ</th><th style="text-align:left">แผนก</th>';
+  html+='<th>ลาป่วย</th><th>ลากิจ</th><th>ลากิจพิเศษ</th><th>พักร้อน</th><th>ลาคลอด<br>(รับเงิน)</th><th></th></tr></thead><tbody>';
+
+  _leaveQuotaData.forEach(function(r,i){
+    html+='<tr>';
+    html+='<td style="text-align:left;font-size:11px;color:var(--gray3)">'+esc(r.empId)+'</td>';
+    html+='<td style="text-align:left"><strong>'+esc(r.name)+'</strong></td>';
+    html+='<td style="text-align:left;font-size:11px">'+esc(r.dept)+'</td>';
+    html+='<td>'+_lqBar(r.sick.used,r.sick.quota)+'</td>';
+    html+='<td>'+_lqBar(r.personal.used,r.personal.quota)+'</td>';
+    html+='<td>'+_lqBar(r.specialPersonal.used,r.specialPersonal.quota)+'</td>';
+    html+='<td>'+_lqBar(r.vacation.used,r.vacation.quota)+'</td>';
+    html+='<td>'+_lqBar(r.matPaid.used,r.matPaid.quota)+'</td>';
+    html+='<td><button class="btn btn-secondary btn-sm" onclick="openEditQuota(\''+esc(r.empId)+'\','+i+')">แก้ไข</button></td>';
+    html+='</tr>';
+  });
+  html+='</tbody></table></div></div></div>';
+  $('tabLeaveQuota').innerHTML=html;
+  $('lqDeptSel').addEventListener('change',function(){_lqDeptFilter=this.value;loadLeaveQuota();});
+}
+
+function openEditQuota(empId, idx) {
+  _editQuotaTarget={empId:empId,idx:idx};
+  var row=_leaveQuotaData[idx];
+  function qRow(label,key,usedVal,quotaVal){
+    return '<div style="margin-bottom:10px">'
+      +'<label style="font-size:12px;font-weight:600;display:block;margin-bottom:3px">'+label+' <span style="font-weight:400;color:var(--gray3)">(ใช้แล้ว: '+usedVal+')</span></label>'
+      +'<input type="number" min="0" max="365" id="lq_'+key+'" value="'+quotaVal+'" style="max-width:120px">'
+      +'</div>';
+  }
+  var form='<div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--navy)">'+esc(row.name)+' — ปี '+_leaveQuotaYear+'</div>';
+  form+=qRow('ลาป่วย (วัน)','sick',row.sick.used,row.sick.quota);
+  form+=qRow('ลากิจ (วัน)','personal',row.personal.used,row.personal.quota);
+  form+=qRow('ลากิจพิเศษ (วัน)','special',row.specialPersonal.used,row.specialPersonal.quota);
+  form+=qRow('พักร้อน (วัน)','vacation',row.vacation.used,row.vacation.quota);
+  form+=qRow('ลาคลอดรับเงิน (วัน)','matPaid',row.matPaid.used,row.matPaid.quota);
+  form+=qRow('ลาคลอดไม่รับเงิน (วัน)','matUnpaid',row.matUnpaid.used,row.matUnpaid.quota);
+  form+=qRow('ลาฝากครรภ์ (ครั้ง)','prenatal',row.prenatal.used,row.prenatal.quota);
+  form+=qRow('ลาราชการทหาร (วัน)','military',row.military.used,row.military.quota);
+  form+='<div style="margin-bottom:10px"><label style="font-size:12px;font-weight:600;display:block;margin-bottom:3px">หมายเหตุ</label>'
+    +'<input type="text" id="lq_note" value="'+esc(row.note||'')+'" placeholder="ระบุเหตุผล..."></div>';
+  $('editQuotaForm').innerHTML=form;
+  $('editQuotaMsg').textContent='';
+  $('editQuotaMsg').className='msg-box';
+  $('editQuotaModal').classList.add('open');
+}
+function closeEditQuota(){$('editQuotaModal').classList.remove('open');}
+
+async function saveEditQuota() {
+  var t=_editQuotaTarget; if(!t) return;
+  var get=function(id){var el=$('lq_'+id);return el?el.value:undefined;};
+  var body={action:'setLeaveQuota',targetEmpId:t.empId,year:_leaveQuotaYear,
+    sickQuota:get('sick'),personalQuota:get('personal'),specialQuota:get('special'),
+    vacationQuota:get('vacation'),matPaidQuota:get('matPaid'),matUnpaidQuota:get('matUnpaid'),
+    prenatalQuota:get('prenatal'),militaryQuota:get('military'),note:$('lq_note').value};
+  var msg=$('editQuotaMsg');
+  msg.className='msg-box';msg.textContent='กำลังบันทึก...';
+  var r=await apiPost(body);
+  if(r.success){
+    var row=_leaveQuotaData[t.idx];
+    function upd(grp,key){if(body[key]!==undefined){row[grp].quota=Number(body[key])||0;row[grp].remaining=Math.max(0,row[grp].quota-row[grp].used);}}
+    upd('sick','sickQuota'); upd('personal','personalQuota'); upd('specialPersonal','specialQuota');
+    upd('vacation','vacationQuota'); upd('matPaid','matPaidQuota'); upd('matUnpaid','matUnpaidQuota');
+    upd('prenatal','prenatalQuota'); upd('military','militaryQuota');
+    row.note=$('lq_note').value;
+    closeEditQuota();
+    _renderLeaveQuota();
+  } else {
+    msg.className='msg-box msg-error';msg.textContent='\u274c '+esc(r.error);
+  }
+}
+
+async function initNewYear() {
+  if(!confirm('สร้างสิทธิ์วันลาปี '+_leaveQuotaYear+' ให้พนักงานทุกคนที่ยังไม่มี?\n(ข้อมูลที่มีอยู่แล้วจะไม่ถูกเปลี่ยน)')) return;
+  var r=await apiPost({action:'initLeaveQuota',year:_leaveQuotaYear,overwrite:false});
+  if(r.success){
+    alert('\u2705 สร้างแล้ว '+r.initialized+' คน | ข้ามที่มีอยู่แล้ว '+r.skipped+' คน');
+    loadLeaveQuota();
+  } else {
+    alert('\u274c '+r.error);
   }
 }
 </script>
