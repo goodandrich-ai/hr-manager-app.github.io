@@ -491,18 +491,28 @@ async function loadDashboard() {
 // ─────────────────────────────────────────────────────────────
 var _showArchived = false;
 function loadEmployees() {
-  var active=_employees.filter(function(e){return e.status!=='ลาออก'&&e.status!=='พ้นสภาพ';});
-  var archived=_employees.filter(function(e){return e.status==='ลาออก'||e.status==='พ้นสภาพ';});
-  var html='<div class="card"><div class="card-header"><h2>&#128101; รายชื่อพนักงาน</h2><p>ปัจจุบัน '+active.length+' คน · Archived '+archived.length+' คน</p></div>';
+  var active   = _employees.filter(function(e){return e.status!=='ลาออก'&&e.status!=='พ้นสภาพ';});
+  var archived = _employees.filter(function(e){return e.status==='ลาออก'||e.status==='พ้นสภาพ';});
+  var listToShow = _showArchived ? archived : active;
+  var html='<div class="card"><div class="card-header">';
+  html+='<h2>'+(  _showArchived?'&#128229; พนักงาน Archived':'&#128101; รายชื่อพนักงาน')+'</h2>';
+  html+='<p>'+(_showArchived?'ลาออก/พ้นสภาพ '+archived.length+' คน':'ปัจจุบัน '+active.length+' คน · Archived '+archived.length+' คน')+'</p>';
+  html+='</div>';
   html+='<div class="card-body">';
   html+='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">';
-  html+='<button class="btn btn-success btn-sm" onclick="openAddEmp()">&#43; เพิ่มพนักงาน</button>';
-  html+='<button class="btn btn-secondary btn-sm" id="toggleArchiveBtn" onclick="toggleArchived()">'+(_showArchived?'&#128101; แสดงเฉพาะ Active':'&#128229; แสดง Archived')+'</button>';
+  html+='<button class="btn btn-success btn-sm" onclick="openAddEmp()" '+(  _showArchived?'style="display:none"':'')+'>&#43; เพิ่มพนักงาน</button>';
+  html+='<button class="btn btn-secondary btn-sm" onclick="toggleArchived()">'+(_showArchived?'&#128101; กลับดู Active':'&#128229; ดู Archived ('+archived.length+')')+'</button>';
   html+='</div>';
   html+='<div class="filter-bar">';
   html+='<input type="text" id="empSearch" placeholder="ค้นหาชื่อ..." oninput="filterEmployees()">';
   html+=_buildDeptSelect('empDeptFilter',_deptFilter);
-  html+='</div><div id="empList">'+_renderEmpList(_showArchived?_employees:active)+'</div></div></div>';
+  html+='</div>';
+  if(_showArchived&&archived.length===0){
+    html+='<div class="empty">&#128229; ยังไม่มีพนักงานที่ Archive</div>';
+  } else {
+    html+='<div id="empList">'+_renderEmpList(listToShow)+'</div>';
+  }
+  html+='</div></div>';
   $('tabEmployees').innerHTML=html;
   $('empDeptFilter').addEventListener('change',function(){_deptFilter=this.value;filterEmployees();});
 }
@@ -1537,7 +1547,7 @@ function _refreshKbizPreview() {
     var e = _employees.find(function(x){ return x.empId === r.empId; });
     return !(e && e.bankAcct && String(e.bankAcct).trim().length >= 10);
   });
-  var total = withBank.reduce(function(s,r){ return s + (ti_net(r)); }, 0);
+  var total = withBank.reduce(function(s,r){ return s + ((r.netPay && Number(r.netPay) > 0) ? Number(r.netPay) : ti_net(r)); }, 0);
   var html = '<div style="background:var(--green-light);border-radius:8px;padding:10px 12px;border:1px solid var(--green)">';
   html += '<div style="font-weight:600;color:var(--green);margin-bottom:4px">&#10003; พร้อม Export: '+withBank.length+' รายการ</div>';
   html += '<div style="font-size:11px;color:var(--gray3)">รวมโอน &#3647;'+fmt(total)+'</div>';
@@ -1584,7 +1594,7 @@ function doExportKBIZ() {
   // Row 1: totals header
   wsData.push([
     'Total No. of Transaction /\nจำนวนรายการทั้งหมด', rows.length,
-    'Total Amount / จำนวนเงินทั้งหมด', rows.reduce(function(s,r){ return s+ti_net(r); }, 0),
+    'Total Amount / จำนวนเงินทั้งหมด', rows.reduce(function(s,r){ return s+((r.netPay && Number(r.netPay) > 0) ? Number(r.netPay) : ti_net(r)); }, 0),
     ''
   ]);
   // Row 2: empty
@@ -1603,7 +1613,7 @@ function doExportKBIZ() {
     var e = _employees.find(function(x){ return x.empId === r.empId; });
     var acct = String(e.bankAcct).trim();
     var name = String(e.bankName || e.name).trim();
-    var net = ti_net(r);
+    var net = (r.netPay && Number(r.netPay) > 0) ? Number(r.netPay) : ti_net(r);
     wsData.push([
       '004',
       acct,
