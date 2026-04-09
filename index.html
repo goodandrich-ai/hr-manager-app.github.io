@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HR Manager — Good Rich Power Plus</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Sarabun',Tahoma,sans-serif;background:#f0f2f5;color:#333;min-height:100vh}
@@ -114,6 +115,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
 .slip-modal-box{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.25)}
 .slip-modal-actions{display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--gray2);justify-content:flex-end;flex-wrap:wrap;background:#fff;border-radius:0 0 16px 16px;position:sticky;bottom:0}
 .btn-slip{background:#dd4155;color:#fff}
+.btn-kbiz{background:#00b050;color:#fff}
 /* Professional payslip */
 .payslip{font-family:'Sarabun',Tahoma,sans-serif;color:#333}
 .ps-header{background:#072b4e;color:#fff;padding:20px 24px}
@@ -179,6 +181,27 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
 </div>
 <div id="printSlipArea" style="display:none"></div>
 
+<!-- K-BIZ Export Modal -->
+<div class="modal-overlay" id="kbizModal">
+  <div class="modal-sheet" style="max-width:420px">
+    <div class="modal-title">
+      <span>&#127981; Export K-BIZ Payroll</span>
+      <button onclick="closeKbizModal()" style="background:none;font-size:22px;padding:0;color:var(--gray3)">&#215;</button>
+    </div>
+    <div style="font-size:13px;color:var(--gray3);margin-bottom:14px">สร้างไฟล์ xlsx พร้อม upload ขึ้น K BIZ — เฉพาะพนักงาน Confirmed ที่มีข้อมูลบัญชีครบ</div>
+    <div class="form-row">
+      <label>วันที่เงินเข้าบัญชี (Effective Date)</label>
+      <input type="date" id="kbiz_effDate" style="width:100%">
+    </div>
+    <div id="kbizPreview" style="margin-top:12px;font-size:12px;color:var(--navy)"></div>
+    <div id="kbizMsg" class="msg-box" style="margin-top:8px"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeKbizModal()">ยกเลิก</button>
+      <button class="btn btn-kbiz" onclick="doExportKBIZ()">&#11015; Download xlsx</button>
+    </div>
+  </div>
+</div>
+
 <!-- Edit Leave Quota Modal -->
 <div class="modal-overlay" id="editQuotaModal">
   <div class="modal-sheet">
@@ -191,6 +214,46 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6c;box-sh
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeEditQuota()">ยกเลิก</button>
       <button class="btn btn-primary" onclick="saveEditQuota()">&#128190; บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Employee Modal -->
+<div class="modal-overlay" id="addEmpModal">
+  <div class="modal-sheet">
+    <div class="modal-title">
+      <span>&#128101; เพิ่มพนักงานใหม่</span>
+      <button onclick="closeAddEmp()" style="background:none;font-size:22px;padding:0;color:var(--gray3)">&#215;</button>
+    </div>
+    <div id="addEmpForm"></div>
+    <div id="addEmpMsg" class="msg-box"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeAddEmp()">ยกเลิก</button>
+      <button class="btn btn-success" onclick="saveAddEmp()">&#10003; เพิ่มพนักงาน</button>
+    </div>
+  </div>
+</div>
+
+<!-- Archive Employee Modal -->
+<div class="modal-overlay" id="archiveEmpModal">
+  <div class="modal-sheet" style="max-width:380px">
+    <div class="modal-title">
+      <span>&#128229; Archive พนักงาน</span>
+      <button onclick="closeArchiveEmp()" style="background:none;font-size:22px;padding:0;color:var(--gray3)">&#215;</button>
+    </div>
+    <div id="archiveEmpInfo" style="font-size:13px;margin-bottom:14px;color:var(--navy)"></div>
+    <div class="form-row">
+      <label>เปลี่ยนสถานะเป็น</label>
+      <select id="archiveStatus">
+        <option value="ลาออก">ลาออก</option>
+        <option value="พ้นสภาพ">พ้นสภาพ</option>
+      </select>
+    </div>
+    <div style="font-size:11px;color:var(--gray3);margin-top:6px">ข้อมูลพนักงานจะยังคงอยู่ใน Google Sheets — เพียงเปลี่ยนสถานะเท่านั้น</div>
+    <div id="archiveEmpMsg" class="msg-box" style="margin-top:8px"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeArchiveEmp()">ยกเลิก</button>
+      <button class="btn btn-danger" onclick="confirmArchiveEmp()">&#128229; Archive</button>
     </div>
   </div>
 </div>
@@ -426,19 +489,32 @@ async function loadDashboard() {
 // ─────────────────────────────────────────────────────────────
 // TAB: EMPLOYEES
 // ─────────────────────────────────────────────────────────────
+var _showArchived = false;
 function loadEmployees() {
-  var html='<div class="card"><div class="card-header"><h2>&#128101; รายชื่อพนักงาน</h2><p>'+_employees.length+' คนทั้งหมด</p></div>';
-  html+='<div class="card-body"><div class="filter-bar">';
+  var active=_employees.filter(function(e){return e.status!=='ลาออก'&&e.status!=='พ้นสภาพ';});
+  var archived=_employees.filter(function(e){return e.status==='ลาออก'||e.status==='พ้นสภาพ';});
+  var html='<div class="card"><div class="card-header"><h2>&#128101; รายชื่อพนักงาน</h2><p>ปัจจุบัน '+active.length+' คน · Archived '+archived.length+' คน</p></div>';
+  html+='<div class="card-body">';
+  html+='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">';
+  html+='<button class="btn btn-success btn-sm" onclick="openAddEmp()">&#43; เพิ่มพนักงาน</button>';
+  html+='<button class="btn btn-secondary btn-sm" id="toggleArchiveBtn" onclick="toggleArchived()">'+(_showArchived?'&#128101; แสดงเฉพาะ Active':'&#128229; แสดง Archived')+'</button>';
+  html+='</div>';
+  html+='<div class="filter-bar">';
   html+='<input type="text" id="empSearch" placeholder="ค้นหาชื่อ..." oninput="filterEmployees()">';
   html+=_buildDeptSelect('empDeptFilter',_deptFilter);
-  html+='</div><div id="empList">'+_renderEmpList(_employees)+'</div></div></div>';
+  html+='</div><div id="empList">'+_renderEmpList(_showArchived?_employees:active)+'</div></div></div>';
   $('tabEmployees').innerHTML=html;
   $('empDeptFilter').addEventListener('change',function(){_deptFilter=this.value;filterEmployees();});
+}
+function toggleArchived() {
+  _showArchived=!_showArchived;
+  loadEmployees();
 }
 function filterEmployees() {
   var s=($('empSearch')?$('empSearch').value:'').toLowerCase();
   var dept=_deptFilter;
-  var f=_employees.filter(function(e){
+  var base=_showArchived?_employees:_employees.filter(function(e){return e.status!=='ลาออก'&&e.status!=='พ้นสภาพ';});
+  var f=base.filter(function(e){
     return (!s||e.name.toLowerCase().indexOf(s)>=0||(e.nickname||'').toLowerCase().indexOf(s)>=0)
         &&(dept==='all'||e.dept===dept);
   });
@@ -474,6 +550,7 @@ function _renderEmpList(list) {
       '<div class="emp-status" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+
         '<span style="font-size:11px;color:'+col+';font-weight:600">'+esc(e.status||'')+'</span>'+
         '<button class="btn btn-secondary btn-sm" onclick="openEditEmp(\''+esc(e.empId)+'\')">&#9999; แก้ไข</button>'+
+        (e.status!=='ลาออก'&&e.status!=='พ้นสภาพ'?'<button class="btn btn-sm" style="background:#fff3e0;color:var(--orange);border:1px solid var(--yellow)" onclick="openArchiveEmp(\''+esc(e.empId)+'\',\''+esc(e.name)+'\')">&#128229; Archive</button>':'')+
       '</div>'+
     '</div>';
   }).join('');
@@ -666,6 +743,7 @@ function _renderPayrollMgr() {
   html+='<button class="btn btn-success"    onclick="savePayroll(\'confirmed\')">&#10003; Confirm</button>';
   html+='<button class="btn btn-csv"        onclick="exportPayrollCSV()">&#128202; Export CSV</button>';
   html+='<button class="btn btn-email"      onclick="sendAllSlips()">&#128231; Send All Slips</button>';
+  html+='<button class="btn btn-kbiz"      onclick="openKbizModal()">&#127981; K-BIZ xlsx</button>';
   html+='</div>';
   html+='<div id="sendProgress" style="display:none;margin-top:8px">';
   html+='<div style="font-size:12px;color:var(--gray3);margin-bottom:3px" id="sendProgressLabel">กำลังส่ง...</div>';
@@ -1080,6 +1158,115 @@ function _buildYearMonthSelects(payMonth){
 // ─────────────────────────────────────────────────────────────
 // EDIT EMPLOYEE
 // ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// ADD EMPLOYEE
+// ─────────────────────────────────────────────────────────────
+function openAddEmp() {
+  var bankOpts=['กสิกรไทย','กรุงเทพ','ไทยพาณิชย์','กรุงไทย','ทหารไทยธนชาต','กรุงศรี','ออมสิน','ธ.ก.ส.','อื่นๆ'];
+  var statOpts=['พนักงานทดลองงาน','พนักงานประจำ'];
+  var typeOpts=['พนักงานประจำ','สัญญาจ้าง','ชั่วคราว'];
+  function sel(opts,def){return opts.map(function(o){return'<option value="'+esc(o)+'"'+(o===def?' selected':'')+'>'+esc(o)+'</option>';}).join('');}
+  var h='<div class="form-group">'+
+    '<div class="form-row"><label>ชื่อ-นามสกุล *</label><input type="text" id="ae_name" placeholder="นายสมชาย ใจดี"></div>'+
+    '<div class="form-row"><label>ชื่อเล่น</label><input type="text" id="ae_nickname"></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>แผนก</label><input type="text" id="ae_dept" list="deptList2"><datalist id="deptList2">'+_depts().map(function(x){return'<option value="'+esc(x)+'">';}).join('')+'</datalist></div>'+
+    '<div class="form-row"><label>ตำแหน่ง</label><input type="text" id="ae_position"></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>สถานะ</label><select id="ae_status">'+sel(statOpts,'พนักงานทดลองงาน')+'</select></div>'+
+    '<div class="form-row"><label>ประเภทการจ้าง</label><select id="ae_empType">'+sel(typeOpts,'พนักงานประจำ')+'</select></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>วันเริ่มงาน</label><input type="date" id="ae_startDate"></div>'+
+    '<div class="form-row"><label>เบอร์โทร</label><input type="text" id="ae_phone"></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>เลขบัตรประชาชน</label><input type="text" id="ae_idCard" maxlength="13" placeholder="13 หลัก"></div>'+
+    '<div class="form-row"><label>อีเมล</label><input type="email" id="ae_email"></div></div>'+
+    '<div class="divider"></div><div class="section-title">&#128176; เงินเดือนและเบี้ยเลี้ยง</div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>เงินเดือน (฿)</label><input type="number" id="ae_salary" value="0"></div>'+
+    '<div class="form-row"><label>ค่าโทรศัพท์ (฿)</label><input type="number" id="ae_phoneAllow" value="0"></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>ค่าทักษะ (฿)</label><input type="number" id="ae_skillAllow" value="0"></div>'+
+    '<div class="form-row"><label>ค่าวิชาชีพ (฿)</label><input type="number" id="ae_proAllow" value="0"></div></div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>ค่าตำแหน่ง (฿)</label><input type="number" id="ae_positionAllow" value="0"></div>'+
+    '<div class="form-row"><label>ค่าออกตรวจสาขา (฿)</label><input type="number" id="ae_branchInspectAllow" value="0"></div></div>'+
+    '<div class="form-row"><label>ค่าเดินทาง (฿)</label><input type="number" id="ae_travelAllow" value="0"></div>'+
+    '<div class="divider"></div><div class="section-title">&#127974; บัญชีธนาคาร</div>'+
+    '<div class="form-group">'+
+    '<div class="form-row"><label>ธนาคาร</label><select id="ae_bank"><option value=""></option>'+bankOpts.map(function(o){return'<option value="'+esc(o)+'">'+esc(o)+'</option>';}).join('')+'</select></div>'+
+    '<div class="form-row"><label>เลขบัญชี</label><input type="text" id="ae_bankAcct"></div></div>'+
+    '<div class="form-row"><label>ชื่อบัญชี</label><input type="text" id="ae_bankName"></div>';
+  $('addEmpForm').innerHTML=h;
+  $('addEmpMsg').style.display='none';
+  $('addEmpModal').classList.add('open');
+}
+function closeAddEmp(){$('addEmpModal').classList.remove('open');}
+async function saveAddEmp(){
+  var msg=$('addEmpMsg');
+  var name=$('ae_name')?$('ae_name').value.trim():'';
+  if(!name){msg.className='msg-box msg-error';msg.textContent='&#10060; กรุณากรอกชื่อ-นามสกุล';msg.style.display='block';return;}
+  msg.className='msg-box';msg.textContent='กำลังบันทึก...';msg.style.display='block';
+  var data={
+    name:name,
+    nickname:    $('ae_nickname')   ?$('ae_nickname').value.trim():'',
+    dept:        $('ae_dept')       ?$('ae_dept').value.trim():'',
+    position:    $('ae_position')   ?$('ae_position').value.trim():'',
+    status:      $('ae_status')     ?$('ae_status').value:'พนักงานทดลองงาน',
+    empType:     $('ae_empType')    ?$('ae_empType').value:'พนักงานประจำ',
+    startDate:   $('ae_startDate')  ?$('ae_startDate').value:'',
+    phone:       $('ae_phone')      ?$('ae_phone').value.trim():'',
+    idCard:      $('ae_idCard')     ?$('ae_idCard').value.trim():'',
+    email:       $('ae_email')      ?$('ae_email').value.trim():'',
+    salary:      $('ae_salary')     ?Number($('ae_salary').value)||0:0,
+    phoneAllow:  $('ae_phoneAllow') ?Number($('ae_phoneAllow').value)||0:0,
+    skillAllow:  $('ae_skillAllow') ?Number($('ae_skillAllow').value)||0:0,
+    proAllow:    $('ae_proAllow')   ?Number($('ae_proAllow').value)||0:0,
+    positionAllow:       $('ae_positionAllow')       ?Number($('ae_positionAllow').value)||0:0,
+    branchInspectAllow:  $('ae_branchInspectAllow')  ?Number($('ae_branchInspectAllow').value)||0:0,
+    travelAllow: $('ae_travelAllow')?Number($('ae_travelAllow').value)||0:0,
+    bank:        $('ae_bank')       ?$('ae_bank').value:'',
+    bankAcct:    $('ae_bankAcct')   ?$('ae_bankAcct').value.trim():'',
+    bankName:    $('ae_bankName')   ?$('ae_bankName').value.trim():'',
+    role:        'employee'
+  };
+  var r=await apiPost({action:'addEmployee',data:data});
+  if(r.success){
+    msg.className='msg-box msg-success';msg.textContent='&#10003; เพิ่มพนักงาน '+esc(name)+' ('+esc(r.empId)+') เรียบร้อย';
+    await _loadEmployees();
+    setTimeout(function(){closeAddEmp();loadEmployees();},1200);
+  } else {
+    msg.className='msg-box msg-error';msg.textContent='&#10060; '+esc(r.error);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// ARCHIVE EMPLOYEE
+// ─────────────────────────────────────────────────────────────
+var _archiveTarget=null;
+function openArchiveEmp(empId,name){
+  _archiveTarget=empId;
+  $('archiveEmpInfo').textContent='พนักงาน: '+name+' ('+empId+')';
+  $('archiveStatus').value='ลาออก';
+  $('archiveEmpMsg').style.display='none';
+  $('archiveEmpModal').classList.add('open');
+}
+function closeArchiveEmp(){$('archiveEmpModal').classList.remove('open');_archiveTarget=null;}
+async function confirmArchiveEmp(){
+  if(!_archiveTarget) return;
+  var msg=$('archiveEmpMsg');
+  var status=$('archiveStatus').value;
+  msg.className='msg-box';msg.textContent='กำลังบันทึก...';msg.style.display='block';
+  var r=await apiPost({action:'archiveEmployee',targetEmpId:_archiveTarget,status:status});
+  if(r.success){
+    msg.className='msg-box msg-success';msg.textContent='&#10003; Archive เรียบร้อย — สถานะ: '+esc(status);
+    await _loadEmployees();
+    setTimeout(function(){closeArchiveEmp();loadEmployees();},1000);
+  } else {
+    msg.className='msg-box msg-error';msg.textContent='&#10060; '+esc(r.error);
+  }
+}
+
 var _editEmpData=null;
 async function openEditEmp(empId){
   $('editEmpModal').classList.add('open');
@@ -1318,6 +1505,145 @@ async function initNewYear() {
   } else {
     alert('\u274c '+r.error);
   }
+}
+
+// ─────────────────────────────────────────────────────────────
+// K-BIZ EXPORT
+// ─────────────────────────────────────────────────────────────
+function openKbizModal() {
+  // Default effective date: last day of current payroll month
+  var d = new Date();
+  if (_payMonth) {
+    var p = _payMonth.split('-');
+    var lastDay = new Date(parseInt(p[0]), parseInt(p[1]), 0); // day 0 = last day of prev month
+    var iso = lastDay.getFullYear()+'-'+String(lastDay.getMonth()+1).padStart(2,'0')+'-'+String(lastDay.getDate()).padStart(2,'0');
+    $('kbiz_effDate').value = iso;
+  }
+  _refreshKbizPreview();
+  $('kbizMsg').style.display = 'none';
+  $('kbizModal').classList.add('open');
+  $('kbiz_effDate').addEventListener('change', _refreshKbizPreview);
+}
+function closeKbizModal() {
+  $('kbizModal').classList.remove('open');
+}
+function _refreshKbizPreview() {
+  var confirmed = _payData.filter(function(r){ return r.status === 'confirmed'; });
+  var withBank = confirmed.filter(function(r){
+    var e = _employees.find(function(x){ return x.empId === r.empId; });
+    return e && e.bankAcct && String(e.bankAcct).trim().length >= 10;
+  });
+  var noBank = confirmed.filter(function(r){
+    var e = _employees.find(function(x){ return x.empId === r.empId; });
+    return !(e && e.bankAcct && String(e.bankAcct).trim().length >= 10);
+  });
+  var total = withBank.reduce(function(s,r){ return s + (ti_net(r)); }, 0);
+  var html = '<div style="background:var(--green-light);border-radius:8px;padding:10px 12px;border:1px solid var(--green)">';
+  html += '<div style="font-weight:600;color:var(--green);margin-bottom:4px">&#10003; พร้อม Export: '+withBank.length+' รายการ</div>';
+  html += '<div style="font-size:11px;color:var(--gray3)">รวมโอน &#3647;'+fmt(total)+'</div>';
+  html += '</div>';
+  if (noBank.length > 0) {
+    html += '<div style="background:var(--yellow-light);border-radius:8px;padding:8px 12px;border:1px solid var(--yellow);margin-top:6px;font-size:11px">';
+    html += '&#9888; ข้าม '+noBank.length+' คน (ไม่มีเลขบัญชี): ';
+    html += noBank.map(function(r){ return esc(r.name); }).join(', ');
+    html += '</div>';
+  }
+  if (confirmed.length === 0) {
+    html = '<div style="color:var(--red);font-size:12px">&#10060; ยังไม่มีพนักงาน Confirmed เดือนนี้</div>';
+  }
+  $('kbizPreview').innerHTML = html;
+}
+function ti_net(r) {
+  var ti = _calcTI(r);
+  var sso = Math.min(Math.round(ti * 0.05), 875);
+  return ti - _calcTD(r, sso);
+}
+function doExportKBIZ() {
+  var msg = $('kbizMsg');
+  var effDateInput = $('kbiz_effDate').value;
+  if (!effDateInput) {
+    msg.className='msg-box msg-error'; msg.textContent='&#10060; กรุณาระบุวันที่จ่ายเงิน'; msg.style.display='block'; return;
+  }
+  // Convert YYYY-MM-DD → DD/MM/YYYY
+  var dp = effDateInput.split('-');
+  var effDateStr = dp[2]+'/'+dp[1]+'/'+dp[0];
+
+  var confirmed = _payData.filter(function(r){ return r.status === 'confirmed'; });
+  var rows = confirmed.filter(function(r){
+    var e = _employees.find(function(x){ return x.empId === r.empId; });
+    return e && e.bankAcct && String(e.bankAcct).trim().length >= 10;
+  });
+  if (!rows.length) {
+    msg.className='msg-box msg-error'; msg.textContent='&#10060; ไม่มีรายการที่พร้อม Export'; msg.style.display='block'; return;
+  }
+
+  // Build workbook using SheetJS
+  var wb = XLSX.utils.book_new();
+  var wsData = [];
+
+  // Row 1: totals header
+  wsData.push([
+    'Total No. of Transaction /\nจำนวนรายการทั้งหมด', rows.length,
+    'Total Amount / จำนวนเงินทั้งหมด', rows.reduce(function(s,r){ return s+ti_net(r); }, 0),
+    ''
+  ]);
+  // Row 2: empty
+  wsData.push(['','','','','']);
+  // Row 3: column headers
+  wsData.push([
+    'Bank Code /\nรหัสธนาคาร',
+    'Account number /\nเลขบัญชีรับเงิน',
+    'Account name /\nชื่อบัญชีรับเงิน',
+    'Amount/\nจำนวนเงิน',
+    'Effective Date /\nวันที่เงินเข้าบัญชี\n(DD/MM/YYYY)'
+  ]);
+
+  // Data rows (row 4+)
+  rows.forEach(function(r, i) {
+    var e = _employees.find(function(x){ return x.empId === r.empId; });
+    var acct = String(e.bankAcct).trim();
+    var name = String(e.bankName || e.name).trim();
+    var net = ti_net(r);
+    wsData.push([
+      '004',
+      acct,
+      name,
+      parseFloat(net.toFixed(2)),
+      i === 0 ? effDateStr : ''   // Effective date only on first row per K-BIZ spec
+    ]);
+  });
+
+  var ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // Column widths
+  ws['!cols'] = [
+    {wch:18}, {wch:16}, {wch:28}, {wch:14}, {wch:20}
+  ];
+  // Row heights
+  ws['!rows'] = [{hpt:30},{hpt:10},{hpt:40}];
+
+  // Style header cells (rows 1 and 3) with green fill — SheetJS community needs cell styles via write options
+  // Apply number format to Amount column (D4:D103)
+  for (var i = 0; i < rows.length; i++) {
+    var cellRef = XLSX.utils.encode_cell({r: 3+i, c: 3}); // col D
+    if (ws[cellRef]) {
+      ws[cellRef].t = 'n';
+      ws[cellRef].z = '#,##0.00';
+    }
+    // Force account number as text (leading zeros)
+    var acctRef = XLSX.utils.encode_cell({r: 3+i, c: 1}); // col B
+    if (ws[acctRef]) { ws[acctRef].t = 's'; }
+  }
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Transaction Upload');
+
+  // File name: Payroll_DDMMYYYY
+  var fname = 'Payroll_'+dp[2]+dp[1]+dp[0]+'.xlsx';
+  XLSX.writeFile(wb, fname);
+
+  msg.className='msg-box msg-success';
+  msg.textContent='&#10003; บันทึกไฟล์ '+fname+' เรียบร้อย ('+rows.length+' รายการ)';
+  msg.style.display='block';
 }
 </script>
 </body>
