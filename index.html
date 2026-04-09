@@ -493,35 +493,77 @@ async function loadPayrollMgr() {
   var active=_employees.filter(function(e){return e.status!=='ลาออก'&&e.status!=='พ้นสภาพ';});
   _payData=active.map(function(e){
     var ex=existing[e.empId]||{};
-    var baseAllowances=(parseFloat(e.phoneAllow)||0)+(parseFloat(e.skillAllow)||0)+(parseFloat(e.proAllow)||0)+(parseFloat(e.travelAllow)||0);
-    var allowances=ex.allowances!==undefined?ex.allowances:baseAllowances;
-    var ti=(parseFloat(ex.salary!==undefined?ex.salary:e.salary)||0)+(parseFloat(allowances)||0)+
-           (parseFloat(ex.otPay)||0)+(parseFloat(ex.otherIncome)||0)+
-           (parseFloat(ex.birthdayAllow)||0)+(parseFloat(ex.weddingAllow)||0)+(parseFloat(ex.specialAcctAllow)||0);
+    var sal=ex.salary!==undefined?ex.salary:e.salary;
+    // Individual allowances: prefer existing payroll record, fallback to employee profile
+    var phoneAllow       =ex.phoneAllow!==undefined       ?ex.phoneAllow       :(e.phoneAllow||0);
+    var skillAllow       =ex.skillAllow!==undefined       ?ex.skillAllow       :(e.skillAllow||0);
+    var proAllow         =ex.proAllow!==undefined         ?ex.proAllow         :(e.proAllow||0);
+    var positionAllow    =ex.positionAllow!==undefined    ?ex.positionAllow    :(e.positionAllow||0);
+    var branchInspectAllow=ex.branchInspectAllow!==undefined?ex.branchInspectAllow:(e.branchInspectAllow||0);
+    var travelAllow      =ex.travelAllow!==undefined      ?ex.travelAllow      :(e.travelAllow||0);
+    // OT hours → pay computed in frontend
+    var otHours1=ex.otHours1||0, otHours2=ex.otHours2||0, otHours3=ex.otHours3||0;
+    var hourlyRate=(parseFloat(sal)||0)/26/8;
+    var otPay1=Math.round(otHours1*hourlyRate*1.5);
+    var otPay2=Math.round(otHours2*hourlyRate*2.0);
+    var otPay3=Math.round(otHours3*hourlyRate*3.0);
+    // Use stored otPayX if available (server-computed), else recalc
+    if(ex.otPay1!==undefined){otPay1=ex.otPay1;} if(ex.otPay2!==undefined){otPay2=ex.otPay2;} if(ex.otPay3!==undefined){otPay3=ex.otPay3;}
+    var ti=(parseFloat(sal)||0)+(parseFloat(ex.allowances)||0)+
+           (parseFloat(phoneAllow)||0)+(parseFloat(skillAllow)||0)+(parseFloat(proAllow)||0)+
+           (parseFloat(positionAllow)||0)+(parseFloat(branchInspectAllow)||0)+(parseFloat(travelAllow)||0)+
+           (parseFloat(ex.trafficFineHelp)||0)+otPay1+otPay2+otPay3+
+           (parseFloat(ex.otherIncome)||0)+(parseFloat(ex.birthdayAllow)||0)+
+           (parseFloat(ex.weddingAllow)||0)+(parseFloat(ex.specialAcctAllow)||0);
     return {
       empId:e.empId, name:e.name, dept:e.dept, position:e.position, month:_payMonth,
-      salary:      ex.salary!==undefined ? ex.salary : e.salary,
-      allowances:  allowances,
-      otPay:       ex.otPay||0,
+      salary:      sal,
+      allowances:  ex.allowances!==undefined?ex.allowances:0,
+      phoneAllow:  phoneAllow, skillAllow:  skillAllow, proAllow:  proAllow,
+      positionAllow: positionAllow, branchInspectAllow: branchInspectAllow, travelAllow: travelAllow,
+      trafficFineHelp: ex.trafficFineHelp||0,
+      otHours1: otHours1, otPay1: otPay1,
+      otHours2: otHours2, otPay2: otPay2,
+      otHours3: otHours3, otPay3: otPay3,
       otherIncome: ex.otherIncome||0,
-      birthdayAllow:    ex.birthdayAllow||0,
-      weddingAllow:     ex.weddingAllow||0,
-      specialAcctAllow: ex.specialAcctAllow||0,
+      birthdayAllow: ex.birthdayAllow||0, weddingAllow: ex.weddingAllow||0, specialAcctAllow: ex.specialAcctAllow||0,
+      withholdingTax: ex.withholdingTax!==undefined?ex.withholdingTax:_calcMonthlyTax(ti),
+      personalLeaveDeduct:   ex.personalLeaveDeduct||0,
+      sickLeaveDeduct:       ex.sickLeaveDeduct||0,
+      lateDeduct:            ex.lateDeduct||0,
+      absentDeduct:          ex.absentDeduct||0,
+      studentLoanDeduct:     ex.studentLoanDeduct||0,
+      companyLoanDeduct:     ex.companyLoanDeduct||0,
+      uniformDeduct:         ex.uniformDeduct||0,
+      groupInsuranceDeduct:  ex.groupInsuranceDeduct||0,
+      midMonthAdvanceDeduct: ex.midMonthAdvanceDeduct||0,
       otherDeduct: ex.otherDeduct||0,
-      withholdingTax: ex.withholdingTax!==undefined ? ex.withholdingTax : _calcMonthlyTax(ti),
-      note:        ex.note||'',
-      status:      ex.status||'draft'
+      note:   ex.note||'',
+      status: ex.status||'draft'
     };
   });
   _renderPayrollMgr();
 }
 
+function _calcTI(r){
+  return (Number(r.salary)||0)+(Number(r.allowances)||0)
+    +(Number(r.phoneAllow)||0)+(Number(r.skillAllow)||0)+(Number(r.proAllow)||0)
+    +(Number(r.positionAllow)||0)+(Number(r.branchInspectAllow)||0)+(Number(r.travelAllow)||0)
+    +(Number(r.trafficFineHelp)||0)+(Number(r.otPay1)||0)+(Number(r.otPay2)||0)+(Number(r.otPay3)||0)
+    +(Number(r.otherIncome)||0)+(Number(r.birthdayAllow)||0)+(Number(r.weddingAllow)||0)+(Number(r.specialAcctAllow)||0);
+}
+function _calcTD(r,sso){
+  return sso+(Number(r.withholdingTax)||0)+(Number(r.personalLeaveDeduct)||0)+(Number(r.sickLeaveDeduct)||0)
+    +(Number(r.lateDeduct)||0)+(Number(r.absentDeduct)||0)+(Number(r.studentLoanDeduct)||0)
+    +(Number(r.companyLoanDeduct)||0)+(Number(r.uniformDeduct)||0)+(Number(r.groupInsuranceDeduct)||0)
+    +(Number(r.midMonthAdvanceDeduct)||0)+(Number(r.otherDeduct)||0);
+}
 function _renderPayrollMgr() {
   var confirmed=_payData.filter(function(r){return r.status==='confirmed';});
   var totalNet=_payData.reduce(function(s,r){
-    var ti=(r.salary||0)+(r.allowances||0)+(r.otPay||0)+(r.otherIncome||0)+(r.birthdayAllow||0)+(r.weddingAllow||0)+(r.specialAcctAllow||0);
-    var sso=Math.min(Math.round(ti*0.05),750);
-    return s+ti-sso-(r.otherDeduct||0)-(r.withholdingTax||0);
+    var ti=_calcTI(r);
+    var sso=Math.min(Math.round(ti*0.05),875);
+    return s+ti-_calcTD(r,sso);
   },0);
 
   var html='<div class="card"><div class="card-header"><h2>&#128176; จัดการเงินเดือน</h2></div><div class="card-body">';
@@ -535,39 +577,90 @@ function _renderPayrollMgr() {
   html+='<span style="background:var(--green-light);padding:4px 12px;border-radius:6px;color:var(--green);font-weight:600">Confirmed '+confirmed.length+' คน</span>';
   html+='<span style="background:var(--gray1);padding:4px 12px;border-radius:6px;color:var(--navy);font-weight:600">สุทธิรวม &#3647;'+fmt(totalNet)+'</span>';
   html+='</div>';
+  html+='<div style="font-size:11px;color:var(--gray3);margin-bottom:8px">&#128310; SSO 5% สูงสุด &#3647;875 &nbsp;|&nbsp; OT คำนวณจากฐานเงินเดือน รัน auto เมื่อใส่ชั่วโมง</div>';
   html+='<div style="overflow-x:auto"><table class="pay-mgr-table">';
-  html+='<tr><th>ID</th><th>ชื่อ</th><th>เงินเดือน</th><th>เบี้ยเลี้ยง</th><th>OT</th><th>รายรับอื่น</th>';
-  html+='<th>วันเกิด</th><th>มงคลสมรส</th><th>พิเศษบัญชี</th>';
-  html+='<th>SSO</th><th>ภาษี</th><th>หักอื่น</th><th>สุทธิ</th><th>สถานะ</th><th>สลิป</th></tr>';
+  html+='<tr>';
+  html+='<th>ID</th><th>ชื่อ</th>';
+  html+='<th style="background:#0d3b6e">เงินเดือน</th>';
+  html+='<th style="background:#0d3b6e">เบี้ยขยัน</th>';
+  html+='<th style="background:#0d3b6e">ค่าโทรศัพท์</th>';
+  html+='<th style="background:#0d3b6e">ค่าทักษะ</th>';
+  html+='<th style="background:#0d3b6e">ค่าวิชาชีพ</th>';
+  html+='<th style="background:#0d3b6e">ค่าตำแหน่ง</th>';
+  html+='<th style="background:#0d3b6e">ค่าออกตรวจ</th>';
+  html+='<th style="background:#0d3b6e">ค่าเดินทาง</th>';
+  html+='<th style="background:#0d3b6e">ช่วยค่าปรับ</th>';
+  html+='<th style="background:#1a4a1a;white-space:normal;font-size:10px">OT ปกติ<br>1.5x (ชม.)</th>';
+  html+='<th style="background:#1a4a1a;white-space:normal;font-size:10px">OT หยุด<br>2x (ชม.)</th>';
+  html+='<th style="background:#1a4a1a;white-space:normal;font-size:10px">OT นักขัตฯ<br>3x (ชม.)</th>';
+  html+='<th style="background:#7a5800">รายรับอื่น</th>';
+  html+='<th style="background:#7a5800">วันเกิด</th>';
+  html+='<th style="background:#7a5800">แต่งงาน</th>';
+  html+='<th style="background:#7a5800">พิเศษบัญชี</th>';
+  html+='<th style="background:#5c1010">SSO</th>';
+  html+='<th style="background:#5c1010">ภาษีหัก</th>';
+  html+='<th style="background:#5c1010">หักลากิจ</th>';
+  html+='<th style="background:#5c1010">หักลาป่วย</th>';
+  html+='<th style="background:#5c1010">หักเข้าสาย</th>';
+  html+='<th style="background:#5c1010">หักขาดงาน</th>';
+  html+='<th style="background:#5c1010">กยศ</th>';
+  html+='<th style="background:#5c1010">กู้บริษัท</th>';
+  html+='<th style="background:#5c1010">ยูนิฟอร์ม</th>';
+  html+='<th style="background:#5c1010">ประกันกลุ่ม</th>';
+  html+='<th style="background:#5c1010">เบิกกลางเดือน</th>';
+  html+='<th style="background:#5c1010">หักอื่น</th>';
+  html+='<th>สุทธิ</th><th>สถานะ</th><th>สลิป</th>';
+  html+='</tr>';
 
   _payData.forEach(function(row,i){
-    var ti=(Number(row.salary)||0)+(Number(row.allowances)||0)+(Number(row.otPay)||0)+(Number(row.otherIncome)||0)
-          +(Number(row.birthdayAllow)||0)+(Number(row.weddingAllow)||0)+(Number(row.specialAcctAllow)||0);
-    var sso=Math.min(Math.round(ti*0.05),750);
-    var net=ti-sso-(Number(row.withholdingTax)||0)-(Number(row.otherDeduct)||0);
+    var ti=_calcTI(row);
+    var sso=Math.min(Math.round(ti*0.05),875);
+    var td=_calcTD(row,sso);
+    var net=ti-td;
     var badge=row.status==='confirmed'
       ?'<span class="badge badge-confirmed">&#10003; Confirmed</span>'
       :'<span class="badge badge-draft">Draft</span>';
+    function inp(field,val,bg){
+      var s='width:68px'+(bg?';background:'+bg:'');
+      return '<input type="number" data-idx="'+i+'" data-field="'+field+'" value="'+(Number(val)||0)+'" oninput="updatePayRow(this)" style="'+s+'">';
+    }
     html+='<tr>';
     html+='<td style="font-size:11px;color:var(--gray3)">'+esc(row.empId)+'</td>';
     html+='<td style="font-weight:600;min-width:110px">'+esc(row.name)+'</td>';
-    html+='<td><input type="number" data-idx="'+i+'" data-field="salary"           value="'+(row.salary||0)+'" oninput="updatePayRow(this)"></td>';
-    html+='<td><input type="number" data-idx="'+i+'" data-field="allowances"        value="'+(row.allowances||0)+'" oninput="updatePayRow(this)"></td>';
-    html+='<td><input type="number" data-idx="'+i+'" data-field="otPay"             value="'+(row.otPay||0)+'" oninput="updatePayRow(this)"></td>';
-    html+='<td><input type="number" data-idx="'+i+'" data-field="otherIncome"       value="'+(row.otherIncome||0)+'" oninput="updatePayRow(this)"></td>';
-    html+='<td><input type="number" data-idx="'+i+'" data-field="birthdayAllow"     value="'+(row.birthdayAllow||0)+'" oninput="updatePayRow(this)" style="background:#fffde7"></td>';
-    html+='<td><input type="number" data-idx="'+i+'" data-field="weddingAllow"      value="'+(row.weddingAllow||0)+'" oninput="updatePayRow(this)" style="background:#fffde7"></td>';
-    html+='<td><input type="number" data-idx="'+i+'" data-field="specialAcctAllow"  value="'+(row.specialAcctAllow||0)+'" oninput="updatePayRow(this)" style="background:#fffde7"></td>';
-    html+='<td id="sso_'+i+'" style="color:var(--orange);font-weight:600">&#3647;'+fmt(sso)+'</td>';
-    html+='<td><input type="number" data-idx="'+i+'" data-field="withholdingTax" value="'+(row.withholdingTax||0)+'" oninput="updatePayRow(this)" style="background:#fde8e8"></td>';
-    html+='<td><input type="number" data-idx="'+i+'" data-field="otherDeduct"        value="'+(row.otherDeduct||0)+'" oninput="updatePayRow(this)"></td>';
+    html+='<td>'+inp('salary',row.salary)+'</td>';
+    html+='<td>'+inp('allowances',row.allowances)+'</td>';
+    html+='<td>'+inp('phoneAllow',row.phoneAllow)+'</td>';
+    html+='<td>'+inp('skillAllow',row.skillAllow)+'</td>';
+    html+='<td>'+inp('proAllow',row.proAllow)+'</td>';
+    html+='<td>'+inp('positionAllow',row.positionAllow)+'</td>';
+    html+='<td>'+inp('branchInspectAllow',row.branchInspectAllow)+'</td>';
+    html+='<td>'+inp('travelAllow',row.travelAllow)+'</td>';
+    html+='<td>'+inp('trafficFineHelp',row.trafficFineHelp,'#e8f5e9')+'</td>';
+    html+='<td style="min-width:90px">'+inp('otHours1',row.otHours1,'#e8f5e9')+'<div id="otpay1_'+i+'" style="font-size:10px;color:var(--green);margin-top:2px">&#3647;'+fmt(row.otPay1||0)+'</div></td>';
+    html+='<td style="min-width:90px">'+inp('otHours2',row.otHours2,'#e8f5e9')+'<div id="otpay2_'+i+'" style="font-size:10px;color:var(--green);margin-top:2px">&#3647;'+fmt(row.otPay2||0)+'</div></td>';
+    html+='<td style="min-width:90px">'+inp('otHours3',row.otHours3,'#e8f5e9')+'<div id="otpay3_'+i+'" style="font-size:10px;color:var(--green);margin-top:2px">&#3647;'+fmt(row.otPay3||0)+'</div></td>';
+    html+='<td>'+inp('otherIncome',row.otherIncome,'#fffde7')+'</td>';
+    html+='<td>'+inp('birthdayAllow',row.birthdayAllow,'#fffde7')+'</td>';
+    html+='<td>'+inp('weddingAllow',row.weddingAllow,'#fffde7')+'</td>';
+    html+='<td>'+inp('specialAcctAllow',row.specialAcctAllow,'#fffde7')+'</td>';
+    html+='<td id="sso_'+i+'" style="color:var(--orange);font-weight:600;white-space:nowrap">&#3647;'+fmt(sso)+'</td>';
+    html+='<td>'+inp('withholdingTax',row.withholdingTax,'#fde8e8')+'</td>';
+    html+='<td>'+inp('personalLeaveDeduct',row.personalLeaveDeduct,'#fde8e8')+'</td>';
+    html+='<td>'+inp('sickLeaveDeduct',row.sickLeaveDeduct,'#fde8e8')+'</td>';
+    html+='<td>'+inp('lateDeduct',row.lateDeduct,'#fde8e8')+'</td>';
+    html+='<td>'+inp('absentDeduct',row.absentDeduct,'#fde8e8')+'</td>';
+    html+='<td>'+inp('studentLoanDeduct',row.studentLoanDeduct,'#fde8e8')+'</td>';
+    html+='<td>'+inp('companyLoanDeduct',row.companyLoanDeduct,'#fde8e8')+'</td>';
+    html+='<td>'+inp('uniformDeduct',row.uniformDeduct,'#fde8e8')+'</td>';
+    html+='<td>'+inp('groupInsuranceDeduct',row.groupInsuranceDeduct,'#fde8e8')+'</td>';
+    html+='<td>'+inp('midMonthAdvanceDeduct',row.midMonthAdvanceDeduct,'#fde8e8')+'</td>';
+    html+='<td>'+inp('otherDeduct',row.otherDeduct,'#fde8e8')+'</td>';
     html+='<td id="net_'+i+'" style="font-weight:700;color:var(--navy);white-space:nowrap">&#3647;'+fmt(net)+'</td>';
     html+='<td style="text-align:center">'+badge+'</td>';
     html+='<td style="text-align:center"><button class="btn btn-slip btn-sm" onclick="openSlipModal('+i+')" title="ดูสลิป">&#128203;</button></td>';
     html+='</tr>';
   });
   html+='</table></div>';
-  html+='<div style="margin-top:10px;font-size:11px;color:var(--gray3)">&#128308; สีเหลือง = สวัสดิการพิเศษ &nbsp;&#128308; สีแดงอ่อน = ภาษีหัก ณ ที่จ่าย (คำนวณอัตโนมัติ แก้ไขได้)</div>';
   html+='<div class="pay-mgr-footer">';
   html+='<button class="btn btn-secondary"  onclick="savePayroll(\'draft\')">&#128190; Save Draft</button>';
   html+='<button class="btn btn-success"    onclick="savePayroll(\'confirmed\')">&#10003; Confirm</button>';
@@ -597,14 +690,23 @@ function updatePayRow(input){
   var idx=parseInt(input.dataset.idx), field=input.dataset.field;
   _payData[idx][field]=Number(input.value)||0;
   var r=_payData[idx];
-  var ti=(r.salary||0)+(r.allowances||0)+(r.otPay||0)+(r.otherIncome||0)+(r.birthdayAllow||0)+(r.weddingAllow||0)+(r.specialAcctAllow||0);
-  var sso=Math.min(Math.round(ti*0.05),750);
-  // Auto-recalc tax only if the user is not editing the tax field directly
+  // Recompute OT pay when hours change
+  if(field==='otHours1'||field==='otHours2'||field==='otHours3'||field==='salary'){
+    var hr=(Number(r.salary)||0)/26/8;
+    r.otPay1=Math.round((Number(r.otHours1)||0)*hr*1.5);
+    r.otPay2=Math.round((Number(r.otHours2)||0)*hr*2.0);
+    r.otPay3=Math.round((Number(r.otHours3)||0)*hr*3.0);
+    if($('otpay1_'+idx)) $('otpay1_'+idx).textContent='฿'+fmt(r.otPay1);
+    if($('otpay2_'+idx)) $('otpay2_'+idx).textContent='฿'+fmt(r.otPay2);
+    if($('otpay3_'+idx)) $('otpay3_'+idx).textContent='฿'+fmt(r.otPay3);
+  }
+  var ti=_calcTI(r);
+  var sso=Math.min(Math.round(ti*0.05),875);
   if(field!=='withholdingTax') _payData[idx].withholdingTax=_calcMonthlyTax(ti);
-  var net=ti-sso-(_payData[idx].withholdingTax||0)-(r.otherDeduct||0);
+  var td=_calcTD(r,sso);
+  var net=ti-td;
   if($('net_'+idx)) $('net_'+idx).textContent='฿'+fmt(net);
   if($('sso_'+idx)) $('sso_'+idx).textContent='฿'+fmt(sso);
-  // Refresh tax input if it was auto-recalculated
   if(field!=='withholdingTax'){
     var taxInput=document.querySelector('input[data-idx="'+idx+'"][data-field="withholdingTax"]');
     if(taxInput) taxInput.value=_payData[idx].withholdingTax;
@@ -636,24 +738,38 @@ async function savePayroll(status){
 // FEATURE 4: EXPORT CSV
 // ─────────────────────────────────────────────────────────────
 function exportPayrollCSV(){
-  var headers=['EmpID','ชื่อ','แผนก','ตำแหน่ง','เดือน','เงินเดือน','เบี้ยเลี้ยง','OT','รายรับอื่น','วันเกิด','มงคลสมรส','พิเศษบัญชี','รวมรายรับ','SSO','ภาษีหัก','หักอื่น','รวมรายหัก','เงินสุทธิ','สถานะ','หมายเหตุ'];
+  var headers=[
+    'EmpID','ชื่อ','แผนก','ตำแหน่ง','เดือน',
+    'เงินเดือน','เบี้ยขยัน','ค่าโทรศัพท์','ค่าทักษะ','ค่าวิชาชีพ',
+    'ค่าตำแหน่ง','ค่าออกตรวจสาขา','ค่าเดินทาง','ช่วยค่าปรับจราจร',
+    'OT ปกติ (ชม.)','OT ปกติ (฿)','OT หยุด (ชม.)','OT หยุด (฿)','OT นักขัตฯ (ชม.)','OT นักขัตฯ (฿)',
+    'รายรับอื่น','วันเกิด','มงคลสมรส','พิเศษบัญชี',
+    'รวมรายรับ',
+    'SSO','ภาษีหัก','หักลากิจ','หักลาป่วย','หักเข้าสาย','หักขาดงาน',
+    'กยศ','กู้บริษัท','ยูนิฟอร์ม','ประกันกลุ่ม','เบิกกลางเดือน','หักอื่น',
+    'รวมรายหัก','เงินสุทธิ','สถานะ','หมายเหตุ'
+  ];
   var rows=[headers.join(',')];
   _payData.forEach(function(r){
-    var ti=(r.salary||0)+(r.allowances||0)+(r.otPay||0)+(r.otherIncome||0)+(r.birthdayAllow||0)+(r.weddingAllow||0)+(r.specialAcctAllow||0);
-    var sso=Math.min(Math.round(ti*0.05),750);
-    var tax=r.withholdingTax||0;
-    var totalDeduct=sso+tax+(r.otherDeduct||0);
-    var net=ti-totalDeduct;
+    var ti=_calcTI(r);
+    var sso=Math.min(Math.round(ti*0.05),875);
+    var td=_calcTD(r,sso);
+    var net=ti-td;
     var cells=[
-      r.empId, '"'+r.name+'"', '"'+(r.dept||'')+'"', '"'+(r.position||'')+'"', r.month,
-      r.salary||0, r.allowances||0, r.otPay||0, r.otherIncome||0,
-      r.birthdayAllow||0, r.weddingAllow||0, r.specialAcctAllow||0,
-      ti, sso, tax, r.otherDeduct||0, totalDeduct, net,
-      r.status, '"'+(r.note||'')+'"'
+      r.empId,'"'+r.name+'"','"'+(r.dept||'')+'"','"'+(r.position||'')+'"',r.month,
+      r.salary||0,r.allowances||0,r.phoneAllow||0,r.skillAllow||0,r.proAllow||0,
+      r.positionAllow||0,r.branchInspectAllow||0,r.travelAllow||0,r.trafficFineHelp||0,
+      r.otHours1||0,r.otPay1||0,r.otHours2||0,r.otPay2||0,r.otHours3||0,r.otPay3||0,
+      r.otherIncome||0,r.birthdayAllow||0,r.weddingAllow||0,r.specialAcctAllow||0,
+      ti,
+      sso,r.withholdingTax||0,r.personalLeaveDeduct||0,r.sickLeaveDeduct||0,
+      r.lateDeduct||0,r.absentDeduct||0,r.studentLoanDeduct||0,r.companyLoanDeduct||0,
+      r.uniformDeduct||0,r.groupInsuranceDeduct||0,r.midMonthAdvanceDeduct||0,r.otherDeduct||0,
+      td,net,r.status,'"'+(r.note||'')+'"'
     ];
     rows.push(cells.join(','));
   });
-  var csv='\uFEFF'+rows.join('\n'); // BOM for Excel Thai
+  var csv='\uFEFF'+rows.join('\n');
   var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
@@ -772,13 +888,10 @@ async function emailSlipFromModal(){
   else alert('✗ '+(res.reason||res.error||'ส่งไม่สำเร็จ'));
 }
 function _renderPayslip(row,emp){
-  var ti=(Number(row.salary)||0)+(Number(row.allowances)||0)+(Number(row.otPay)||0)+(Number(row.otherIncome)||0)
-       +(Number(row.birthdayAllow)||0)+(Number(row.weddingAllow)||0)+(Number(row.specialAcctAllow)||0);
-  var sso=Math.min(Math.round(ti*0.05),750);
-  var tax=Number(row.withholdingTax)||0;
-  var od=Number(row.otherDeduct)||0;
-  var totalDeduct=sso+tax+od;
-  var net=ti-totalDeduct;
+  var ti=_calcTI(row);
+  var sso=Math.min(Math.round(ti*0.05),875);
+  var td=_calcTD(row,sso);
+  var net=ti-td;
   var ml=_monthLabel(row.month||_payMonth);
   function R(label,val,cls){
     return '<tr'+(cls?' class="'+cls+'"':'')+'>'+
@@ -797,20 +910,38 @@ function _renderPayslip(row,emp){
     '<div class="ps-sec">รายรับ</div>'+
     '<table class="ps-table">'+
     R('เงินเดือนฐาน',row.salary)+
-    ((row.allowances>0)?R('เบี้ยเลี้ยงรวม',row.allowances):'')+
-    ((row.otPay>0)?R('ค่า OT',row.otPay):'')+
-    ((row.otherIncome>0)?R('รายรับอื่นๆ',row.otherIncome):'')+
-    ((row.birthdayAllow>0)?R('&#127874; สวัสดิการวันเกิด',row.birthdayAllow):'')+
-    ((row.weddingAllow>0)?R('&#128141; สวัสดิการมงคลสมรส',row.weddingAllow):'')+
-    ((row.specialAcctAllow>0)?R('&#127991; เงินพิเศษบัญชี',row.specialAcctAllow):'')+
+    ((Number(row.allowances)>0)?R('เบี้ยขยัน',row.allowances):'')+
+    ((Number(row.phoneAllow)>0)?R('ค่าโทรศัพท์',row.phoneAllow):'')+
+    ((Number(row.skillAllow)>0)?R('ค่าทักษะ',row.skillAllow):'')+
+    ((Number(row.proAllow)>0)?R('ค่าวิชาชีพ',row.proAllow):'')+
+    ((Number(row.positionAllow)>0)?R('ค่าตำแหน่ง',row.positionAllow):'')+
+    ((Number(row.branchInspectAllow)>0)?R('ค่าออกตรวจสาขา',row.branchInspectAllow):'')+
+    ((Number(row.travelAllow)>0)?R('ค่าเดินทาง',row.travelAllow):'')+
+    ((Number(row.trafficFineHelp)>0)?R('ช่วยค่าปรับจราจร',row.trafficFineHelp):'')+
+    ((Number(row.otPay1)>0)?R('OT ปกติ 1.5x ('+(row.otHours1||0)+' ชม.)',row.otPay1):'')+
+    ((Number(row.otPay2)>0)?R('OT วันหยุด 2x ('+(row.otHours2||0)+' ชม.)',row.otPay2):'')+
+    ((Number(row.otPay3)>0)?R('OT นักขัตฤกษ์ 3x ('+(row.otHours3||0)+' ชม.)',row.otPay3):'')+
+    ((Number(row.otherIncome)>0)?R('รายรับอื่นๆ',row.otherIncome):'')+
+    ((Number(row.birthdayAllow)>0)?R('&#127874; สวัสดิการวันเกิด',row.birthdayAllow):'')+
+    ((Number(row.weddingAllow)>0)?R('&#128141; สวัสดิการมงคลสมรส',row.weddingAllow):'')+
+    ((Number(row.specialAcctAllow)>0)?R('&#127991; เงินพิเศษบัญชี',row.specialAcctAllow):'')+
     R('รวมรายรับ',ti,'ps-total')+
     '</table>'+
     '<div class="ps-sec">รายหัก</div>'+
     '<table class="ps-table">'+
-    R('ประกันสังคม (SSO 5%, สูงสุด &#3647;750)',sso)+
-    ((tax>0)?R('ภาษีหัก ณ ที่จ่าย',tax):'')+
-    ((od>0)?R('หักอื่นๆ',od):'')+
-    R('รวมรายหัก',totalDeduct,'ps-total')+
+    R('ประกันสังคม (SSO 5%, สูงสุด &#3647;875)',sso)+
+    ((Number(row.withholdingTax)>0)?R('ภาษีหัก ณ ที่จ่าย',row.withholdingTax):'')+
+    ((Number(row.personalLeaveDeduct)>0)?R('หักลากิจ',row.personalLeaveDeduct):'')+
+    ((Number(row.sickLeaveDeduct)>0)?R('หักลาป่วย',row.sickLeaveDeduct):'')+
+    ((Number(row.lateDeduct)>0)?R('หักเข้าสาย',row.lateDeduct):'')+
+    ((Number(row.absentDeduct)>0)?R('หักขาดงาน',row.absentDeduct):'')+
+    ((Number(row.studentLoanDeduct)>0)?R('หัก กยศ',row.studentLoanDeduct):'')+
+    ((Number(row.companyLoanDeduct)>0)?R('หักเงินกู้ยืมบริษัท',row.companyLoanDeduct):'')+
+    ((Number(row.uniformDeduct)>0)?R('หักค่าชุดยูนิฟอร์ม',row.uniformDeduct):'')+
+    ((Number(row.groupInsuranceDeduct)>0)?R('หักค่าประกันกลุ่ม',row.groupInsuranceDeduct):'')+
+    ((Number(row.midMonthAdvanceDeduct)>0)?R('หักเงินเบิกกลางเดือน',row.midMonthAdvanceDeduct):'')+
+    ((Number(row.otherDeduct)>0)?R('หักอื่นๆ',row.otherDeduct):'')+
+    R('รวมรายหัก',td,'ps-total')+
     '</table>'+
     '<div class="ps-net">'+
       '<span class="ps-net-label">&#128184; เงินสุทธิที่ได้รับ</span>'+
@@ -834,12 +965,10 @@ function downloadSlip(idx){
   setTimeout(function(){URL.revokeObjectURL(url);},15000);
 }
 function _generateSlipHTML(row){
-  var ti=(Number(row.salary)||0)+(Number(row.allowances)||0)+(Number(row.otPay)||0)+(Number(row.otherIncome)||0)
-        +(Number(row.birthdayAllow)||0)+(Number(row.weddingAllow)||0)+(Number(row.specialAcctAllow)||0);
-  var sso=Math.min(Math.round(ti*0.05),750);
-  var tax=Number(row.withholdingTax)||0;
-  var totalDeduct=sso+tax+(Number(row.otherDeduct)||0);
-  var net=ti-totalDeduct;
+  var ti=_calcTI(row);
+  var sso=Math.min(Math.round(ti*0.05),875);
+  var td=_calcTD(row,sso);
+  var net=ti-td;
   var ml=_monthLabel(row.month||_payMonth);
   function R(label,val,cls){
     return '<tr'+(cls?' class="'+cls+'"':'')+'>'+
@@ -861,18 +990,36 @@ function _generateSlipHTML(row){
   '<div class="mt">'+ml+' &nbsp;|&nbsp; '+row.empId+' &nbsp;|&nbsp; '+row.name+'<br>'+(row.dept||'')+(row.dept&&row.position?' &mdash; ':' ')+(row.position||'')+'</div>'+
   '<div class="sec">รายรับ</div><table>'+
   R('เงินเดือนฐาน',row.salary)+
-  R('เบี้ยเลี้ยงรวม',row.allowances)+
-  ((row.otPay>0)?R('ค่า OT',row.otPay):'')+
-  ((row.otherIncome>0)?R('รายรับอื่นๆ',row.otherIncome):'')+
-  ((row.birthdayAllow>0)?R('&#127874; สวัสดิการวันเกิด',row.birthdayAllow):'')+
-  ((row.weddingAllow>0)?R('&#128141; สวัสดิการมงคลสมรส',row.weddingAllow):'')+
-  ((row.specialAcctAllow>0)?R('&#127991; เงินพิเศษบัญชี',row.specialAcctAllow):'')+
+  ((Number(row.allowances)>0)?R('เบี้ยขยัน',row.allowances):'')+
+  ((Number(row.phoneAllow)>0)?R('ค่าโทรศัพท์',row.phoneAllow):'')+
+  ((Number(row.skillAllow)>0)?R('ค่าทักษะ',row.skillAllow):'')+
+  ((Number(row.proAllow)>0)?R('ค่าวิชาชีพ',row.proAllow):'')+
+  ((Number(row.positionAllow)>0)?R('ค่าตำแหน่ง',row.positionAllow):'')+
+  ((Number(row.branchInspectAllow)>0)?R('ค่าออกตรวจสาขา',row.branchInspectAllow):'')+
+  ((Number(row.travelAllow)>0)?R('ค่าเดินทาง',row.travelAllow):'')+
+  ((Number(row.trafficFineHelp)>0)?R('ช่วยค่าปรับจราจร',row.trafficFineHelp):'')+
+  ((Number(row.otPay1)>0)?R('OT ปกติ 1.5x ('+(row.otHours1||0)+' ชม.)',row.otPay1):'')+
+  ((Number(row.otPay2)>0)?R('OT วันหยุด 2x ('+(row.otHours2||0)+' ชม.)',row.otPay2):'')+
+  ((Number(row.otPay3)>0)?R('OT นักขัตฤกษ์ 3x ('+(row.otHours3||0)+' ชม.)',row.otPay3):'')+
+  ((Number(row.otherIncome)>0)?R('รายรับอื่นๆ',row.otherIncome):'')+
+  ((Number(row.birthdayAllow)>0)?R('&#127874; สวัสดิการวันเกิด',row.birthdayAllow):'')+
+  ((Number(row.weddingAllow)>0)?R('&#128141; สวัสดิการมงคลสมรส',row.weddingAllow):'')+
+  ((Number(row.specialAcctAllow)>0)?R('&#127991; เงินพิเศษบัญชี',row.specialAcctAllow):'')+
   R('รวมรายรับ',ti,'tot')+'</table>'+
   '<div class="sec">รายหัก</div><table>'+
-  R('ประกันสังคม (SSO 5%, สูงสุด &#3647;750)',sso)+
-  ((tax>0)?R('ภาษีหัก ณ ที่จ่าย',tax):'')+
-  (((row.otherDeduct||0)>0)?R('หักอื่นๆ',row.otherDeduct):'')+
-  R('รวมรายหัก',totalDeduct,'tot')+'</table>'+
+  R('ประกันสังคม (SSO 5%, สูงสุด &#3647;875)',sso)+
+  ((Number(row.withholdingTax)>0)?R('ภาษีหัก ณ ที่จ่าย',row.withholdingTax):'')+
+  ((Number(row.personalLeaveDeduct)>0)?R('หักลากิจ',row.personalLeaveDeduct):'')+
+  ((Number(row.sickLeaveDeduct)>0)?R('หักลาป่วย',row.sickLeaveDeduct):'')+
+  ((Number(row.lateDeduct)>0)?R('หักเข้าสาย',row.lateDeduct):'')+
+  ((Number(row.absentDeduct)>0)?R('หักขาดงาน',row.absentDeduct):'')+
+  ((Number(row.studentLoanDeduct)>0)?R('หัก กยศ',row.studentLoanDeduct):'')+
+  ((Number(row.companyLoanDeduct)>0)?R('หักเงินกู้ยืมบริษัท',row.companyLoanDeduct):'')+
+  ((Number(row.uniformDeduct)>0)?R('หักค่าชุดยูนิฟอร์ม',row.uniformDeduct):'')+
+  ((Number(row.groupInsuranceDeduct)>0)?R('หักค่าประกันกลุ่ม',row.groupInsuranceDeduct):'')+
+  ((Number(row.midMonthAdvanceDeduct)>0)?R('หักเงินเบิกกลางเดือน',row.midMonthAdvanceDeduct):'')+
+  ((Number(row.otherDeduct)>0)?R('หักอื่นๆ',row.otherDeduct):'')+
+  R('รวมรายหัก',td,'tot')+'</table>'+
   '<table>'+R('&#128184; เงินสุทธิที่ได้รับ',net,'net')+'</table>'+
   '<div class="foot" style="text-align:right"><button onclick="window.print()" style="background:#072b4e;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px">&#128438; พิมพ์</button></div>'+
   '</div></body></html>';
@@ -971,6 +1118,8 @@ function _renderEditEmpForm(d){
     '<div class="form-group">'+
     '<div class="form-row"><label>ค่าทักษะ (฿)</label><input type="number" id="ef_skillAllow" value="'+(Number(d.skillAllow)||0)+'"></div>'+
     '<div class="form-row"><label>ค่าวิชาชีพ (฿)</label><input type="number" id="ef_proAllow" value="'+(Number(d.proAllow)||0)+'"></div></div>'+
+    '<div class="form-row"><label>ค่าตำแหน่ง (฿)</label><input type="number" id="ef_positionAllow" value="'+(Number(d.positionAllow)||0)+'"></div>'+
+    '<div class="form-row"><label>ค่าออกตรวจสาขา (฿)</label><input type="number" id="ef_branchInspectAllow" value="'+(Number(d.branchInspectAllow)||0)+'"></div>'+
     '<div class="form-row"><label>ค่าเดินทาง (฿)</label><input type="number" id="ef_travelAllow" value="'+(Number(d.travelAllow)||0)+'"></div>'+
     '<div class="divider"></div><div class="section-title">&#127974; บัญชีธนาคาร</div>'+
     '<div class="form-group">'+
@@ -1001,7 +1150,9 @@ async function saveEditEmp(){
     phoneAllow:  $('ef_phoneAllow') ?Number($('ef_phoneAllow').value)||0:0,
     skillAllow:  $('ef_skillAllow') ?Number($('ef_skillAllow').value)||0:0,
     proAllow:    $('ef_proAllow')   ?Number($('ef_proAllow').value)||0:0,
-    travelAllow: $('ef_travelAllow')?Number($('ef_travelAllow').value)||0:0,
+    positionAllow:      $('ef_positionAllow')     ?Number($('ef_positionAllow').value)||0:0,
+    branchInspectAllow: $('ef_branchInspectAllow')?Number($('ef_branchInspectAllow').value)||0:0,
+    travelAllow:        $('ef_travelAllow')       ?Number($('ef_travelAllow').value)||0:0,
     bank:        $('ef_bank')       ?$('ef_bank').value:'',
     bankAcct:    $('ef_bankAcct')   ?$('ef_bankAcct').value.trim():'',
     bankName:    $('ef_bankName')   ?$('ef_bankName').value.trim():'',
